@@ -1,0 +1,32 @@
+@baseUrl = http://localhost:4000
+@token = your-token-here
+
+### Register new user
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "esteban.abanto@gmail.com",
+  "password": "password12345",
+  "name": "Esteban The Master"
+}
+
+### Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "no@example.com",
+  "password": "password123"
+}
+
+### Get current user profile (protected route)
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{token}}
+
+### Test with invalid token
+GET {{baseUrl}}/auth/me
+Authorization: Bearer invalid-token-here
+
+### Test without token
+GET {{baseUrl}}/auth/me
