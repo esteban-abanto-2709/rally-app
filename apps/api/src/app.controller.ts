@@ -8,14 +8,19 @@ export class AppController {
   @Get('health')
   async getHealth() {
     try {
-      await this.prisma.$executeRawUnsafe('SELECT 1'); 
-      return { status: 'ok', database: 'connected' };
+      await this.prisma.$executeRawUnsafe('SELECT 1');
+
+      return {
+        status: 'ok',
+        timestamp: new Date().toISOString(),
+        database: 'connected'
+      };
     } catch (error) {
-      console.error('Salud de DB fallida:', error);
-      return { 
-        status: 'error', 
+      return {
+        status: 'error',
+        timestamp: new Date().toISOString(),
         database: 'disconnected',
-        message: error instanceof Error ? error.message : 'Unknown error' 
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
