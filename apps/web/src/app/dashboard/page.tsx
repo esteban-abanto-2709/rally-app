@@ -24,7 +24,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/lib/api";
 import { Project, CreateProjectDto } from "@/types/project";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus } from "lucide-react";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -76,25 +76,12 @@ export default function DashboardPage() {
         projectData,
         token,
       );
-      setProjects([newProject, ...projects]);
       setIsDialogOpen(false);
-      e.currentTarget.reset();
+      // Redirect to the new project page
+      router.push(`/dashboard/projects/${newProject.id}`);
     } catch (error) {
       console.error("Failed to create project:", error);
-    } finally {
       setIsCreating(false);
-    }
-  };
-
-  const handleDeleteProject = async (projectId: string) => {
-    if (!token || !confirm("Are you sure you want to delete this project?"))
-      return;
-
-    try {
-      await api.delete(`/projects/${projectId}`, token);
-      setProjects(projects.filter((p) => p.id !== projectId));
-    } catch (error) {
-      console.error("Failed to delete project:", error);
     }
   };
 
@@ -260,26 +247,20 @@ export default function DashboardPage() {
             ) : (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {projects.map((project) => (
-                  <Card key={project.id} className="relative group">
+                  <Card
+                    key={project.id}
+                    className="cursor-pointer hover:shadow-md transition-shadow"
+                    onClick={() =>
+                      router.push(`/dashboard/projects/${project.id}`)
+                    }
+                  >
                     <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <CardTitle className="line-clamp-1">
-                            {project.name}
-                          </CardTitle>
-                          <CardDescription className="line-clamp-2 mt-2">
-                            {project.description || "No description"}
-                          </CardDescription>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="opacity-0 group-hover:opacity-100 transition-opacity"
-                          onClick={() => handleDeleteProject(project.id)}
-                        >
-                          <Trash2 className="w-4 h-4 text-destructive" />
-                        </Button>
-                      </div>
+                      <CardTitle className="line-clamp-1">
+                        {project.name}
+                      </CardTitle>
+                      <CardDescription className="line-clamp-2 mt-2">
+                        {project.description || "No description"}
+                      </CardDescription>
                     </CardHeader>
                     <CardContent>
                       <p className="text-xs text-muted-foreground">
