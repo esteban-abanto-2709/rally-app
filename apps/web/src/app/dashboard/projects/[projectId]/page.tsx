@@ -32,7 +32,7 @@ import { useTasks } from "@/hooks/useTasks";
 
 export default function ProjectDetailPage() {
   const params = useParams();
-  const projectId = params.id as string;
+  const projectId = params.projectId as string;
 
   const {
     isLoading: isLoadingProjects,
@@ -378,7 +378,10 @@ export default function ProjectDetailPage() {
                   >
                     <CardContent className="py-4">
                       <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1 space-y-1">
+                        <Link
+                          href={`/dashboard/projects/${projectId}/tasks/${task.id}`}
+                          className="flex-1 space-y-1 block hover:opacity-80 transition-opacity"
+                        >
                           <div className="flex items-center gap-2">
                             <Badge variant={getStatusBadgeVariant(task.status)}>
                               {getStatusLabel(task.status)}
@@ -394,7 +397,7 @@ export default function ProjectDetailPage() {
                             Created{" "}
                             {new Date(task.createdAt).toLocaleDateString()}
                           </p>
-                        </div>
+                        </Link>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon">
