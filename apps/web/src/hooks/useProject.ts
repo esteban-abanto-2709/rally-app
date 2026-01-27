@@ -4,12 +4,19 @@ import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/auth-context";
 import { api } from "@/lib/api";
 import { Project, UpdateProjectDto } from "@/types/project";
+import { useProjectsStore } from "@/store/useProjectsStore";
 
 export function useProject(projectId: string | undefined) {
   const { token } = useAuth();
   const [project, setProject] = useState<Project | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Access the global store actions
+  const removeProjectFromStore = useProjectsStore(
+    (state) => state.removeProject,
+  );
+  const updateProjectInStore = useProjectsStore((state) => state.updateProject);
 
   // Cargar proyecto
   const loadProject = useCallback(async () => {
@@ -40,12 +47,19 @@ export function useProject(projectId: string | undefined) {
   const updateProject = async (data: UpdateProjectDto): Promise<Project> => {
     if (!token || !projectId) throw new Error("Missing token or project ID");
 
+    // Call API and update local state
     const updated = await api.patch<Project>(
       `/projects/${projectId}`,
       data,
       token,
     );
     setProject(updated);
+
+    // Sync with global store
+    updateProjectInStore(projectId, data, token).catch((err) =>
+      console.warn("Failed to sync update with global store", err),
+    );
+
     return updated;
   };
 
@@ -53,7 +67,8 @@ export function useProject(projectId: string | undefined) {
   const deleteProject = async (): Promise<void> => {
     if (!token || !projectId) throw new Error("Missing token or project ID");
 
-    await api.delete(`/projects/${projectId}`, token);
+    // Use store action which handles API call and state update
+    await removeProjectFromStore(projectId, token);
     setProject(null);
   };
 

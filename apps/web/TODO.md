@@ -1,45 +1,41 @@
-# 🎨 Frontend Roadmap & TODOs (Next.js)
+# Project Roadmap & Refactoring Plan
 
-Este documento rastrea la deuda técnica, refactorización y mejoras específicas para la aplicación web.
+## 🚨 Critical Refactoring (>200 lines)
 
-## 🚨 Prioridad Alta: Refactorización
+The following files are too large/complex and need to be broken down into smaller components.
 
-**Objetivo de la semana:** Desacoplar componentes "God Object" para mejorar mantenibilidad.
+- [ ] **`src/app/dashboard/page.tsx`** (~230 lines)
+  - **Current State**: Contains Data Fetching, State Management, Stats Grid UI, Projects Table UI, and Create Project Dialog UI.
+  - **Action**:
+    - [ ] Extract `StatsGrid` component.
+    - [ ] Extract `ProjectsTable` component.
+    - [ ] Extract `CreateProjectDialog` component.
+    - [ ] Move logic to a custom hook (already partly done with `useProjects`, but UI state is mixed).
 
-- [ ] **Desacoplar `dashboard/page.tsx`** (Muy complejo)
-  - [ ] Crear hook `useProjects` para lógica de fetching y estado.
-  - [ ] Extraer componente `<StatsCards />` (Tarjetas de resumen).
-  - [ ] Extraer componente `<ProjectsTable />` (Tabla principal).
-  - [ ] Extraer componente `<CreateProjectDialog />` (Modal).
-  - [ ] Mover lógica de formularios a hooks personalizados.
+## 🎨 Design System Unification
 
-- [ ] **Desacoplar `dashboard/projects/[id]/page.tsx`** (Crítico)
-  - [ ] Crear hook `useProject(id)` para manejo de datos del proyecto.
-  - [ ] Crear hook `useTasks(projectId)` para manejo de tareas.
-  - [ ] Componentizar UI:
-    - [ ] `<ProjectHeader />` (Título y acciones).
-    - [ ] `<ProjectInfo />` (Detalles y descripción).
-    - [ ] `<TasksList />` (Lista de items).
-    - [ ] `<TaskItem />` (Item individual).
+We currently have a split personality in design tokens. We need to standardize to use **Semantic Variables** (defined in `globals.css`) instead of **Raw Colors**.
 
-## 💄 Diseño & UI
+- [ ] **Audit & Fix Color Usage**
+  - **Issue**: `dashboard/page.tsx` uses raw colors like `text-slate-600`, `bg-blue-900`. `page.tsx` (Landing) uses semantic colors like `text-muted-foreground`.
+  - **Goal**: Replace all hardcoded colors with semantic design tokens.
+  - **Action**:
+    - `text-slate-600` -> `text-muted-foreground`
+    - `bg-white/50` -> `bg-card/50` or `bg-background/50`
+    - `border-slate-200` -> `border-border`
+    - gradients -> Define semantic gradients or use primary/secondary tokens.
 
-- [ ] **Implementar Design System**
-  - [ ] Definir tokens de colores (terminar de decidir entre Glassmorphism vs Flat).
-  - [ ] Estandarizar componentes base (`Button`, `Input`, `Card`).
-  - [ ] Unificar estilos de `Navbar` y `Footer` entre Landing y Dashboard.
+## 🛠 Features & Improvements
 
-## 🏗️ Mejoras Técnicas
+- [ ] **Review `DashboardSidebar.tsx`**
+  - Check if it exceeds complexity limits or uses raw colors.
+- [ ] **Accessibility Check**
+  - Ensure all form inputs (in Dialogs) have associated labels.
+  - Check contrast ratios (fixing raw colors to semantic usually helps this if the theme is good).
+- [ ] **Dark Mode Consistency**
+  - Verify that raw dark mode classes (e.g. `dark:text-slate-400`) are replaced by the natural behavior of semantic tokens (which handle dark mode automatically).
 
-- [ ] **Hooks Globales**
-  - [ ] `hooks/useApi.ts`: Wrapper para llamadas al backend con manejo de errores consistente.
-- [ ] **UX**
-  - [ ] Implementar Skeleton Loaders (reemplazar textos "Loading...").
-  - [ ] Añadir Error Boundaries para evitar pantallas blancas en caso de fallo.
-- [ ] **Testing**
-  - [ ] Tests de integración para flujos principales (Crear proyecto, Crear tarea).
+## 📝 Next Steps
 
-## 🔮 Funcionalidades Futuras
-
-- [ ] KPIs reales en Dashboard (conectar con backend).
-- [ ] Filtros y búsqueda en tablas.
+1.  **Refactor `dashboard/page.tsx`** (Highest Priority).
+2.  **Standardize Design Tokens** in Dashboard components.

@@ -1,74 +1,71 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/auth-context";
-import { api } from "@/lib/api";
-import { Project, CreateProjectDto, UpdateProjectDto } from "@/types/project";
+import { useProjectsStore } from "@/store/useProjectsStore";
+import { CreateProjectDto, UpdateProjectDto } from "@/types/project";
 
 export function useProjects() {
   const { token } = useAuth();
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  // Cargar proyectos
-  const loadProjects = useCallback(async () => {
-    if (!token) {
-      setIsLoading(false);
-      return;
-    }
+  // Select state from store
+  const projects = useProjectsStore((state) => state.projects);
+  const isLoading = useProjectsStore((state) => state.isLoading);
+  const error = useProjectsStore((state) => state.error);
+  const initialized = useProjectsStore((state) => state.initialized);
 
-    try {
-      setIsLoading(true);
-      setError(null);
-      const data = await api.get<Project[]>("/projects", token);
-      setProjects(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load projects");
-      console.error("Failed to load projects:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [token]);
+  // Select actions
+  const fetchProjects = useProjectsStore((state) => state.fetchProjects);
+  const addProject = useProjectsStore((state) => state.addProject);
+  const updateProjectStore = useProjectsStore((state) => state.updateProject);
+  const removeProject = useProjectsStore((state) => state.removeProject);
+  const resetStore = useProjectsStore((state) => state.reset);
 
-  // Cargar al montar
+  // Initial load
   useEffect(() => {
-    loadProjects();
-  }, [loadProjects]);
+    if (token && !initialized) {
+      fetchProjects(token);
+    }
+    // Reset store on unmount or token change if needed?
+    // Usually we want to keep data in store, so maybe just reset on logout (token null)
+    if (!token) {
+      resetStore();
+    }
+  }, [token, initialized, fetchProjects, resetStore]);
 
-  // Crear proyecto
-  const createProject = async (data: CreateProjectDto): Promise<Project> => {
-    if (!token) throw new Error("No authentication token");
+  // Wrapper functions to match old API signature (optional, but convenient)
+  const createProject = useCallback(
+    async (data: CreateProjectDto) => {
+      if (!token) throw new Error("No authentication token");
+      return addProject(data, token);
+    },
+    [token, addProject],
+  );
 
-    const newProject = await api.post<Project>("/projects", data, token);
-    setProjects((prev) => [newProject, ...prev]);
-    return newProject;
-  };
+  const updateProject = useCallback(
+    async (id: string, data: UpdateProjectDto) => {
+      if (!token) throw new Error("No authentication token");
+      return updateProjectStore(id, data, token);
+    },
+    [token, updateProjectStore],
+  );
 
-  // Actualizar proyecto
-  const updateProject = async (
-    id: string,
-    data: UpdateProjectDto,
-  ): Promise<Project> => {
-    if (!token) throw new Error("No authentication token");
+  const deleteProject = useCallback(
+    async (id: string) => {
+      if (!token) throw new Error("No authentication token");
+      return removeProject(id, token);
+    },
+    [token, removeProject],
+  );
 
-    const updated = await api.patch<Project>(`/projects/${id}`, data, token);
-    setProjects((prev) => prev.map((p) => (p.id === id ? updated : p)));
-    return updated;
-  };
-
-  // Eliminar proyecto
-  const deleteProject = async (id: string): Promise<void> => {
-    if (!token) throw new Error("No authentication token");
-
-    await api.delete(`/projects/${id}`, token);
-    setProjects((prev) => prev.filter((p) => p.id !== id));
-  };
-
-  // Obtener un proyecto por ID (del cache)
-  const getProjectById = (id: string): Project | undefined => {
+  const getProjectById = (id: string) => {
     return projects.find((p) => p.id === id);
   };
+
+  // Expose loadProjects for manual refresh if needed
+  const loadProjects = useCallback(async () => {
+    if (token) await fetchProjects(token);
+  }, [token, fetchProjects]);
 
   return {
     projects,
