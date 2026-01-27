@@ -27,7 +27,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { useProject } from "@/hooks/useProject";
+import { useProjects } from "@/hooks/useProjects";
 import { useTasks } from "@/hooks/useTasks";
 
 export default function ProjectDetailPage() {
@@ -35,11 +35,13 @@ export default function ProjectDetailPage() {
   const projectId = params.id as string;
 
   const {
-    project,
-    isLoading: isLoadingProject,
+    isLoading: isLoadingProjects,
     updateProject,
     deleteProject,
-  } = useProject(projectId);
+    getProjectById,
+  } = useProjects();
+
+  const project = getProjectById(projectId) || null;
 
   const {
     tasks,
@@ -49,7 +51,7 @@ export default function ProjectDetailPage() {
     deleteTask,
   } = useTasks({ projectId });
 
-  const isLoading = isLoadingProject || isLoadingTasks;
+  const isLoading = isLoadingProjects || isLoadingTasks;
 
   const router = useRouter();
   const { user, isLoading: isAuthLoading } = useAuth();
@@ -92,7 +94,7 @@ export default function ProjectDetailPage() {
     }
 
     try {
-      await updateProject(updateData);
+      await updateProject(project.id, updateData);
       setIsEditing(false);
     } catch (error) {
       console.error("Failed to update project:", error);
@@ -112,7 +114,7 @@ export default function ProjectDetailPage() {
     }
 
     try {
-      await deleteProject();
+      await deleteProject(project.id);
       router.push("/dashboard");
     } catch (error) {
       console.error("Failed to delete project:", error);
