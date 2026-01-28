@@ -3,14 +3,23 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Edit2, Trash2, Save } from "lucide-react";
 
 import { useAuth } from "@/contexts/auth-context";
 import { api } from "@/lib/api";
-import { Task, TaskStatus } from "@/types/task";
+import { Task, TaskStatus, UpdateTaskDto } from "@/types/task";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function TaskDetailPage() {
   const params = useParams();
@@ -23,6 +32,13 @@ export default function TaskDetailPage() {
   const [task, setTask] = useState<Task | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Form state
+  const [editedTitle, setEditedTitle] = useState("");
+  const [editedDescription, setEditedDescription] = useState("");
+  const [editedStatus, setEditedStatus] = useState<TaskStatus>(TaskStatus.OPEN);
 
   useEffect(() => {
     if (!isAuthLoading && !user) {
@@ -35,9 +51,11 @@ export default function TaskDetailPage() {
 
       try {
         setIsLoading(true);
-        // Using the api helper directly as useTasks is designed for lists primarily
         const data = await api.get<Task>(`/tasks/${taskId}`, token);
         setTask(data);
+        setEditedTitle(data.title);
+        setEditedDescription(data.description || "");
+        setEditedStatus(data.status);
       } catch (err) {
         console.error("Failed to fetch task:", err);
         setError("Failed to load task details");
@@ -50,6 +68,65 @@ export default function TaskDetailPage() {
       fetchTask();
     }
   }, [user, token, isAuthLoading, router, taskId]);
+
+  const handleSave = async () => {
+    if (!task || !token) return;
+
+    setIsSaving(true);
+    const updateData: UpdateTaskDto = {
+      title: editedTitle !== task.title ? editedTitle : undefined,
+      description:
+        editedDescription !== task.description ? editedDescription : undefined,
+      status: editedStatus !== task.status ? editedStatus : undefined,
+    };
+
+    // Si no hay cambios, cancelar
+    if (!updateData.title && !updateData.description && !updateData.status) {
+      setIsEditing(false);
+      setIsSaving(false);
+      return;
+    }
+
+    try {
+      const updated = await api.patch<Task>(
+        `/tasks/${task.id}`,
+        updateData,
+        token,
+      );
+      setTask(updated);
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Failed to update task:", error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    if (task) {
+      setEditedTitle(task.title);
+      setEditedDescription(task.description || "");
+      setEditedStatus(task.status);
+    }
+    setIsEditing(false);
+  };
+
+  const handleDelete = async () => {
+    if (
+      !task ||
+      !token ||
+      !confirm("Are you sure you want to delete this task?")
+    ) {
+      return;
+    }
+
+    try {
+      await api.delete(`/tasks/${task.id}`, token);
+      router.push(`/dashboard/projects/${projectId}`);
+    } catch (error) {
+      console.error("Failed to delete task:", error);
+    }
+  };
 
   const getStatusBadgeVariant = (status: TaskStatus) => {
     switch (status) {
@@ -115,28 +192,109 @@ export default function TaskDetailPage() {
         <Card>
           <CardHeader>
             <div className="flex items-start justify-between gap-4">
-              <div className="space-y-1">
-                <CardTitle className="text-2xl">{task.title}</CardTitle>
-                <div className="flex items-center gap-2 pt-2">
-                  <Badge variant={getStatusBadgeVariant(task.status)}>
-                    {getStatusLabel(task.status)}
-                  </Badge>
-                  <span className="text-xs text-muted-foreground">
-                    ID: {task.id}
-                  </span>
-                </div>
+              <div className="flex-1 space-y-4">
+                {isEditing ? (
+                  <>
+                    <div className="space-y-2">
+                      <Input
+                        value={editedTitle}
+                        onChange={(e) => setEditedTitle(e.target.value)}
+                        placeholder="Task title"
+                        className="text-2xl font-bold"
+                        disabled={isSaving}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Select
+                        value={editedStatus}
+                        onValueChange={(value: TaskStatus) =>
+                          setEditedStatus(value)
+                        }
+                        disabled={isSaving}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value={TaskStatus.OPEN}>Open</SelectItem>
+                          <SelectItem value={TaskStatus.IN_PROGRESS}>
+                            In Progress
+                          </SelectItem>
+                          <SelectItem value={TaskStatus.DONE}>Done</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="space-y-2">
+                      <CardTitle className="text-2xl">{task.title}</CardTitle>
+                      <div className="flex items-center gap-2">
+                        <Badge variant={getStatusBadgeVariant(task.status)}>
+                          {getStatusLabel(task.status)}
+                        </Badge>
+                        <span className="text-xs text-muted-foreground">
+                          ID: {task.id}
+                        </span>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="space-y-2">
-              <h3 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">
-                Description
-              </h3>
-              <p className="text-base leading-relaxed whitespace-pre-wrap">
-                {task.description || "No description provided."}
-              </p>
-            </div>
+            {isEditing ? (
+              <>
+                <div className="space-y-2">
+                  <h3 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">
+                    Description
+                  </h3>
+                  <Textarea
+                    value={editedDescription}
+                    onChange={(e) => setEditedDescription(e.target.value)}
+                    placeholder="Task description (optional)"
+                    rows={5}
+                    disabled={isSaving}
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <Button onClick={handleSave} disabled={isSaving}>
+                    <Save className="w-4 h-4 mr-2" />
+                    {isSaving ? "Saving..." : "Save Changes"}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={handleCancel}
+                    disabled={isSaving}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="space-y-2">
+                  <h3 className="font-medium text-sm text-muted-foreground uppercase tracking-wide">
+                    Description
+                  </h3>
+                  <p className="text-base leading-relaxed whitespace-pre-wrap">
+                    {task.description || "No description provided."}
+                  </p>
+                </div>
+
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={() => setIsEditing(true)}>
+                    <Edit2 className="w-4 h-4 mr-2" />
+                    Edit Task
+                  </Button>
+                  <Button variant="destructive" onClick={handleDelete}>
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete Task
+                  </Button>
+                </div>
+              </>
+            )}
 
             <div className="grid grid-cols-2 gap-4 pt-4 border-t">
               <div>

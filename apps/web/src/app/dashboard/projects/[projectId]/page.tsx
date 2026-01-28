@@ -15,17 +15,25 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { UpdateProjectDto } from "@/types/project";
 import { TaskStatus, CreateTaskDto } from "@/types/task";
-import { ArrowLeft, Save, Trash2, Plus, MoreVertical } from "lucide-react";
+import { ArrowLeft, Save, Trash2, Plus } from "lucide-react";
 import Link from "next/link";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 import { useProjects } from "@/hooks/useProjects";
 import { useTasks } from "@/hooks/useTasks";
@@ -48,7 +56,6 @@ export default function ProjectDetailPage() {
     isLoading: isLoadingTasks,
     createTask,
     updateTaskStatus,
-    deleteTask,
   } = useTasks({ projectId });
 
   const isLoading = isLoadingProjects || isLoadingTasks;
@@ -152,50 +159,11 @@ export default function ProjectDetailPage() {
     }
   };
 
-  const handleUpdateTaskStatus = async (
-    taskId: string,
-    newStatus: TaskStatus,
-  ) => {
+  const handleStatusChange = async (taskId: string, newStatus: TaskStatus) => {
     try {
       await updateTaskStatus(taskId, newStatus);
     } catch (error) {
-      console.error("Failed to update task:", error);
-    }
-  };
-
-  const handleDeleteTask = async (taskId: string) => {
-    if (!confirm("Are you sure you want to delete this task?")) return;
-
-    try {
-      await deleteTask(taskId);
-    } catch (error) {
-      console.error("Failed to delete task:", error);
-    }
-  };
-
-  const getStatusBadgeVariant = (status: TaskStatus) => {
-    switch (status) {
-      case TaskStatus.OPEN:
-        return "secondary";
-      case TaskStatus.IN_PROGRESS:
-        return "default";
-      case TaskStatus.DONE:
-        return "outline";
-      default:
-        return "secondary";
-    }
-  };
-
-  const getStatusLabel = (status: TaskStatus) => {
-    switch (status) {
-      case TaskStatus.OPEN:
-        return "Open";
-      case TaskStatus.IN_PROGRESS:
-        return "In Progress";
-      case TaskStatus.DONE:
-        return "Done";
-      default:
-        return status;
+      console.error("Failed to update task status:", error);
     }
   };
 
@@ -301,65 +269,68 @@ export default function ProjectDetailPage() {
           </Card>
 
           {/* Tasks Section */}
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold">Tasks ({tasks.length})</h2>
-              <Dialog
-                open={isTaskDialogOpen}
-                onOpenChange={setIsTaskDialogOpen}
-              >
-                <DialogTrigger asChild>
-                  <Button>
-                    <Plus className="w-4 h-4 mr-2" />
-                    New Task
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Create New Task</DialogTitle>
-                    <DialogDescription>
-                      Add a new task to this project
-                    </DialogDescription>
-                  </DialogHeader>
-                  <form onSubmit={handleCreateTask} className="space-y-4">
-                    <div className="space-y-2">
-                      <Input
-                        id="title"
-                        name="title"
-                        placeholder="Task title"
-                        required
-                        disabled={isCreatingTask}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Textarea
-                        id="description"
-                        name="description"
-                        placeholder="Task description (optional)"
-                        disabled={isCreatingTask}
-                      />
-                    </div>
-                    <div className="flex gap-3 justify-end">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => setIsTaskDialogOpen(false)}
-                        disabled={isCreatingTask}
-                      >
-                        Cancel
-                      </Button>
-                      <Button type="submit" disabled={isCreatingTask}>
-                        {isCreatingTask ? "Creating..." : "Create Task"}
-                      </Button>
-                    </div>
-                  </form>
-                </DialogContent>
-              </Dialog>
-            </div>
-
-            {tasks.length === 0 ? (
-              <Card>
-                <CardContent className="flex flex-col items-center justify-center py-12">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-xl">
+                  Tasks ({tasks.length})
+                </CardTitle>
+                <Dialog
+                  open={isTaskDialogOpen}
+                  onOpenChange={setIsTaskDialogOpen}
+                >
+                  <DialogTrigger asChild>
+                    <Button>
+                      <Plus className="w-4 h-4 mr-2" />
+                      New Task
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Create New Task</DialogTitle>
+                      <DialogDescription>
+                        Add a new task to this project
+                      </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleCreateTask} className="space-y-4">
+                      <div className="space-y-2">
+                        <Input
+                          id="title"
+                          name="title"
+                          placeholder="Task title"
+                          required
+                          disabled={isCreatingTask}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Textarea
+                          id="description"
+                          name="description"
+                          placeholder="Task description (optional)"
+                          disabled={isCreatingTask}
+                        />
+                      </div>
+                      <div className="flex gap-3 justify-end">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setIsTaskDialogOpen(false)}
+                          disabled={isCreatingTask}
+                        >
+                          Cancel
+                        </Button>
+                        <Button type="submit" disabled={isCreatingTask}>
+                          {isCreatingTask ? "Creating..." : "Create Task"}
+                        </Button>
+                      </div>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {tasks.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12">
                   <p className="text-muted-foreground mb-4">
                     No tasks yet. Create your first task to get started!
                   </p>
@@ -367,83 +338,67 @@ export default function ProjectDetailPage() {
                     <Plus className="w-4 h-4 mr-2" />
                     Create Task
                   </Button>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="space-y-2">
-                {tasks.map((task) => (
-                  <Card
-                    key={task.id}
-                    className="hover:shadow-sm transition-shadow"
-                  >
-                    <CardContent className="py-4">
-                      <div className="flex items-start justify-between gap-4">
-                        <Link
-                          href={`/dashboard/projects/${projectId}/tasks/${task.id}`}
-                          className="flex-1 space-y-1 block hover:opacity-80 transition-opacity"
-                        >
-                          <div className="flex items-center gap-2">
-                            <Badge variant={getStatusBadgeVariant(task.status)}>
-                              {getStatusLabel(task.status)}
-                            </Badge>
-                            <h3 className="font-medium">{task.title}</h3>
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Task</TableHead>
+                      <TableHead>Created</TableHead>
+                      <TableHead>Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {tasks.map((task) => (
+                      <TableRow key={task.id}>
+                        <TableCell>
+                          <div>
+                            <Link
+                              href={`/dashboard/projects/${projectId}/tasks/${task.id}`}
+                              className="font-medium hover:underline"
+                            >
+                              {task.title}
+                            </Link>
+                            {task.description && (
+                              <p className="text-xs text-muted-foreground mt-0.5">
+                                {task.description}
+                              </p>
+                            )}
                           </div>
-                          {task.description && (
-                            <p className="text-sm text-muted-foreground">
-                              {task.description}
-                            </p>
-                          )}
-                          <p className="text-xs text-muted-foreground">
-                            Created{" "}
-                            {new Date(task.createdAt).toLocaleDateString()}
-                          </p>
-                        </Link>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <MoreVertical className="w-4 h-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              onClick={() =>
-                                handleUpdateTaskStatus(task.id, TaskStatus.OPEN)
-                              }
-                            >
-                              Mark as Open
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() =>
-                                handleUpdateTaskStatus(
-                                  task.id,
-                                  TaskStatus.IN_PROGRESS,
-                                )
-                              }
-                            >
-                              Mark as In Progress
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() =>
-                                handleUpdateTaskStatus(task.id, TaskStatus.DONE)
-                              }
-                            >
-                              Mark as Done
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => handleDeleteTask(task.id)}
-                              className="text-destructive"
-                            >
-                              Delete Task
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </div>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {new Date(task.createdAt).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell>
+                          <Select
+                            value={task.status}
+                            onValueChange={(value: TaskStatus) =>
+                              handleStatusChange(task.id, value)
+                            }
+                          >
+                            <SelectTrigger className="w-[140px]">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value={TaskStatus.OPEN}>
+                                Open
+                              </SelectItem>
+                              <SelectItem value={TaskStatus.IN_PROGRESS}>
+                                In Progress
+                              </SelectItem>
+                              <SelectItem value={TaskStatus.DONE}>
+                                Done
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
