@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/auth-context";
 import { api } from "@/lib/api";
+import { routes } from "@/lib/routes";
 import { Task, CreateTaskDto, UpdateTaskDto, TaskStatus } from "@/types/task";
 
 interface UseTasksOptions {
@@ -27,7 +28,7 @@ export function useTasks(options: UseTasksOptions = {}) {
     try {
       setIsLoading(true);
       setError(null);
-      const endpoint = projectId ? `/tasks?projectId=${projectId}` : "/tasks";
+      const endpoint = routes.api.tasks.list(projectId);
       const data = await api.get<Task[]>(endpoint, token);
       setTasks(data);
     } catch (err) {
@@ -53,7 +54,7 @@ export function useTasks(options: UseTasksOptions = {}) {
       try {
         setIsLoading(true);
         setError(null);
-        const task = await api.get<Task>(`/tasks/${id}`, token);
+        const task = await api.get<Task>(routes.api.tasks.detail(id), token);
         // Actualizar en el cache si existe
         setTasks((prev) => {
           const exists = prev.find((t) => t.id === id);
@@ -77,7 +78,7 @@ export function useTasks(options: UseTasksOptions = {}) {
   const createTask = async (data: CreateTaskDto): Promise<Task> => {
     if (!token) throw new Error("No authentication token");
 
-    const newTask = await api.post<Task>("/tasks", data, token);
+    const newTask = await api.post<Task>(routes.api.tasks.list(), data, token);
     setTasks((prev) => [newTask, ...prev]);
     return newTask;
   };
@@ -86,7 +87,11 @@ export function useTasks(options: UseTasksOptions = {}) {
   const updateTask = async (id: string, data: UpdateTaskDto): Promise<Task> => {
     if (!token) throw new Error("No authentication token");
 
-    const updated = await api.patch<Task>(`/tasks/${id}`, data, token);
+    const updated = await api.patch<Task>(
+      routes.api.tasks.detail(id),
+      data,
+      token,
+    );
     setTasks((prev) => prev.map((t) => (t.id === id ? updated : t)));
     return updated;
   };
@@ -103,7 +108,7 @@ export function useTasks(options: UseTasksOptions = {}) {
   const deleteTask = async (id: string): Promise<void> => {
     if (!token) throw new Error("No authentication token");
 
-    await api.delete(`/tasks/${id}`, token);
+    await api.delete(routes.api.tasks.detail(id), token);
     setTasks((prev) => prev.filter((t) => t.id !== id));
   };
 

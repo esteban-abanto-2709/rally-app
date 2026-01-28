@@ -8,6 +8,7 @@ import {
   ReactNode,
 } from "react";
 import { api } from "@/lib/api";
+import { routes } from "@/lib/routes";
 import { User, AuthResponse, LoginDto, RegisterDto } from "@/types/auth";
 
 interface AuthContextType {
@@ -39,7 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loadUser = async (authToken: string) => {
     try {
-      const userData = await api.get<User>("/auth/me", authToken);
+      const userData = await api.get<User>(routes.api.auth.me(), authToken);
       setUser(userData);
     } catch (error) {
       console.error("Failed to load user:", error);
@@ -51,14 +52,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const login = async (data: LoginDto) => {
-    const response = await api.post<AuthResponse>("/auth/login", data);
+    const response = await api.post<AuthResponse>(
+      routes.api.auth.login(),
+      data,
+    );
     localStorage.setItem("token", response.access_token);
     setToken(response.access_token);
     setUser(response.user);
   };
 
   const register = async (data: RegisterDto) => {
-    const response = await api.post<AuthResponse>("/auth/register", data);
+    const response = await api.post<AuthResponse>(
+      routes.api.auth.register(),
+      data,
+    );
     localStorage.setItem("token", response.access_token);
     setToken(response.access_token);
     setUser(response.user);

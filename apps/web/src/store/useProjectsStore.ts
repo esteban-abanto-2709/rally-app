@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { Project, CreateProjectDto, UpdateProjectDto } from "@/types/project";
 import { api } from "@/lib/api";
+import { routes } from "@/lib/routes";
 
 interface ProjectsState {
   projects: Project[];
@@ -33,7 +34,10 @@ export const useProjectsStore = create<ProjectsState>((set, get) => ({
 
     set({ isLoading: true, error: null });
     try {
-      const projects = await api.get<Project[]>("/projects", token);
+      const projects = await api.get<Project[]>(
+        routes.api.projects.list(),
+        token,
+      );
       set({ projects, isLoading: false, initialized: true });
     } catch (err) {
       set({
@@ -46,7 +50,11 @@ export const useProjectsStore = create<ProjectsState>((set, get) => ({
   addProject: async (data: CreateProjectDto, token: string) => {
     set({ isLoading: true, error: null });
     try {
-      const newProject = await api.post<Project>("/projects", data, token);
+      const newProject = await api.post<Project>(
+        routes.api.projects.list(),
+        data,
+        token,
+      );
       set((state) => ({
         projects: [newProject, ...state.projects],
         isLoading: false,
@@ -64,7 +72,11 @@ export const useProjectsStore = create<ProjectsState>((set, get) => ({
   updateProject: async (id: string, data: UpdateProjectDto, token: string) => {
     // Optimistic update logic could go here, but for now simple await
     try {
-      const updated = await api.patch<Project>(`/projects/${id}`, data, token);
+      const updated = await api.patch<Project>(
+        routes.api.projects.detail(id),
+        data,
+        token,
+      );
       set((state) => ({
         projects: state.projects.map((p) => (p.id === id ? updated : p)),
       }));
@@ -78,7 +90,7 @@ export const useProjectsStore = create<ProjectsState>((set, get) => ({
 
   removeProject: async (id: string, token: string) => {
     try {
-      await api.delete(`/projects/${id}`, token);
+      await api.delete(routes.api.projects.detail(id), token);
       set((state) => ({
         projects: state.projects.filter((p) => p.id !== id),
       }));
