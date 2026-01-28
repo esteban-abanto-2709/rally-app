@@ -14,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/auth-context";
+import { routes } from "@/lib/routes";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -33,7 +34,7 @@ export default function RegisterPage() {
 
     try {
       await register({ email, password, name: name || undefined });
-      router.push("/dashboard");
+      router.push(routes.dashboard());
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed");
     } finally {
@@ -105,7 +106,7 @@ export default function RegisterPage() {
               Already have an account?{" "}
             </span>
             <Link
-              href="/login"
+              href={routes.login()}
               className="text-primary hover:underline font-medium"
             >
               Sign in

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { CheckCircle2 } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
+import { routes } from "@/lib/routes";
 
 export default function LandingPage() {
   const router = useRouter();
@@ -14,7 +15,7 @@ export default function LandingPage() {
 
   useEffect(() => {
     if (!isLoading && user) {
-      router.push("/dashboard");
+      router.push(routes.dashboard());
     }
   }, [user, isLoading, router]);
 
@@ -34,10 +35,10 @@ export default function LandingPage() {
           <div className="font-semibold text-lg">TaskFlow</div>
           <div className="flex gap-3">
             <Button variant="ghost" asChild>
-              <Link href="/login">Login</Link>
+              <Link href={routes.login()}>Login</Link>
             </Button>
             <Button asChild>
-              <Link href="/register">Get Started</Link>
+              <Link href={routes.register()}>Get Started</Link>
             </Button>
           </div>
         </div>
@@ -55,10 +56,10 @@ export default function LandingPage() {
           </p>
           <div className="flex gap-4 justify-center pt-4">
             <Button size="lg" asChild>
-              <Link href="/register">Start Free</Link>
+              <Link href={routes.register()}>Start Free</Link>
             </Button>
             <Button size="lg" variant="outline" asChild>
-              <Link href="/login">Sign In</Link>
+              <Link href={routes.login()}>Sign In</Link>
             </Button>
           </div>
         </div>

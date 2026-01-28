@@ -8,6 +8,7 @@ import { ReactNode } from "react";
 import DashboardHeader from "@/components/dashboard/layout/DashboardHeader";
 import DashboardSidebar from "@/components/dashboard/layout/DashboardSidebar";
 import DashboardFooter from "@/components/dashboard/layout/DashboardFooter";
+import { routes } from "@/lib/routes";
 
 export default function DashboardNewLayout({
   children,
@@ -19,7 +20,7 @@ export default function DashboardNewLayout({
 
   useEffect(() => {
     if (!isLoading && !user) {
-      router.push("/login");
+      router.push(routes.login());
     }
   }, [user, isLoading, router]);
 

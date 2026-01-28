@@ -9,6 +9,7 @@ import {
 import { useRouter } from "next/navigation";
 
 import { useProjects } from "@/hooks/useProjects";
+import { routes } from "@/lib/routes";
 
 export default function DashboardSidebar() {
   const { projects, isLoading } = useProjects();
@@ -24,7 +25,7 @@ export default function DashboardSidebar() {
           {/* Dashboard Button */}
           <button
             className="cursor-pointer w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-100 transition-all"
-            onClick={() => router.push("/dashboard")}
+            onClick={() => router.push(routes.dashboard())}
           >
             <LayoutDashboard className="w-5 h-5 shrink-0" />
             <span>Dashboard</span>
@@ -47,9 +48,7 @@ export default function DashboardSidebar() {
                 <button
                   key={project.id}
                   className="cursor-pointer w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-100 transition-all"
-                  onClick={() =>
-                    router.push(`/dashboard/projects/${project.id}`)
-                  }
+                  onClick={() => router.push(routes.project(project.id))}
                 >
                   <FolderKanban className="w-4 h-4 shrink-0 text-slate-400" />
                   <span className="truncate">{project.name}</span>
@@ -68,7 +67,7 @@ export default function DashboardSidebar() {
         <div className="space-y-1">
           <button
             className="cursor-pointer w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-100 transition-all"
-            onClick={() => router.push("/dashboard/help")}
+            onClick={() => router.push(routes.help())}
           >
             <HelpCircle className="w-5 h-5 shrink-0" />
             <span>Help & Support</span>

@@ -15,6 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { routes } from "@/lib/routes";
 
 export default function DashboardHeader() {
   const router = useRouter();
@@ -22,7 +23,7 @@ export default function DashboardHeader() {
 
   const handleLogout = () => {
     logout();
-    router.push("/");
+    router.push(routes.home());
   };
 
   return (

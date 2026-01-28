@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { routes } from "@/lib/routes";
 
 export default function TaskDetailPage() {
   const params = useParams();
@@ -122,7 +123,7 @@ export default function TaskDetailPage() {
 
     try {
       await api.delete(`/tasks/${task.id}`, token);
-      router.push(`/dashboard/projects/${projectId}`);
+      router.push(routes.project(projectId));
     } catch (error) {
       console.error("Failed to delete task:", error);
     }
@@ -166,7 +167,7 @@ export default function TaskDetailPage() {
     return (
       <div className="container mx-auto px-4 py-8">
         <Button variant="ghost" asChild className="mb-4">
-          <Link href={`/dashboard/projects/${projectId}`}>
+          <Link href={routes.project(projectId)}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Project
           </Link>
@@ -183,7 +184,7 @@ export default function TaskDetailPage() {
       <div className="max-w-2xl mx-auto space-y-6">
         {/* Back Button */}
         <Button variant="ghost" asChild>
-          <Link href={`/dashboard/projects/${projectId}`}>
+          <Link href={routes.project(projectId)}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Project
           </Link>

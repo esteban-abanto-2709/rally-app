@@ -14,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/auth-context";
+import { routes } from "@/lib/routes";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -32,7 +33,7 @@ export default function LoginPage() {
 
     try {
       await login({ email, password });
-      router.push("/dashboard");
+      router.push(routes.dashboard());
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {
@@ -90,7 +91,7 @@ export default function LoginPage() {
               Don&apos;t have an account?{" "}
             </span>
             <Link
-              href="/register"
+              href={routes.register()}
               className="text-primary hover:underline font-medium"
             >
               Sign up

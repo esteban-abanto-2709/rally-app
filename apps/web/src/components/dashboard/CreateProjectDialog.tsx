@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { routes } from "@/lib/routes";
 
 export function CreateProjectDialog() {
   const router = useRouter();
@@ -37,7 +38,7 @@ export function CreateProjectDialog() {
     try {
       const newProject = await createProject(projectData);
       setOpen(false);
-      router.push(`/dashboard/projects/${newProject.id}`);
+      router.push(routes.project(newProject.id));
     } catch (error) {
       console.error("Failed to create project:", error);
     } finally {

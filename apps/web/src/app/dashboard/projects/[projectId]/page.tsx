@@ -37,6 +37,7 @@ import Link from "next/link";
 
 import { useProjects } from "@/hooks/useProjects";
 import { useTasks } from "@/hooks/useTasks";
+import { routes } from "@/lib/routes";
 
 export default function ProjectDetailPage() {
   const params = useParams();
@@ -122,7 +123,7 @@ export default function ProjectDetailPage() {
 
     try {
       await deleteProject(project.id);
-      router.push("/dashboard");
+      router.push(routes.dashboard());
     } catch (error) {
       console.error("Failed to delete project:", error);
     }
@@ -186,7 +187,7 @@ export default function ProjectDetailPage() {
         <div className="max-w-4xl mx-auto space-y-6">
           {/* Back Button */}
           <Button variant="ghost" asChild>
-            <Link href="/dashboard">
+            <Link href={routes.dashboard()}>
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Dashboard
             </Link>
@@ -354,7 +355,7 @@ export default function ProjectDetailPage() {
                         <TableCell>
                           <div>
                             <Link
-                              href={`/dashboard/projects/${projectId}/tasks/${task.id}`}
+                              href={routes.task(projectId, task.id)}
                               className="font-medium hover:underline"
                             >
                               {task.title}
