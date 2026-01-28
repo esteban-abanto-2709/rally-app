@@ -25,7 +25,7 @@ export default function DashboardNewLayout({
   }, [user, isLoading, router]);
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50/30 to-indigo-50/40 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+    <div className="min-h-screen bg-linear-to-br from-background via-accent/30 to-accent/40">
       {/* Header - Full Width at Top */}
       <DashboardHeader />
 

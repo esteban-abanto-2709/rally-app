@@ -23,7 +23,7 @@ export function ProjectsTable({
   onProjectClick,
 }: ProjectsTableProps) {
   return (
-    <Card className="border-slate-200/60 dark:border-slate-800/60 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
+    <Card className="border-border/60 bg-card/50 backdrop-blur-sm">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-xl">Your Projects</CardTitle>
@@ -43,22 +43,22 @@ export function ProjectsTable({
             {projects.map((project) => (
               <TableRow
                 key={project.id}
-                className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                className="cursor-pointer hover:bg-accent/50"
                 onClick={() => onProjectClick(project.id)}
               >
                 <TableCell>
-                  <div className="w-10 h-10 rounded-lg bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
-                    <FolderKanban className="w-5 h-5 text-white" />
+                  <div className="w-10 h-10 rounded-lg bg-linear-to-br from-primary to-primary/80 flex items-center justify-center">
+                    <FolderKanban className="w-5 h-5 text-primary-foreground" />
                   </div>
                 </TableCell>
                 <TableCell>
                   <div>
-                    <p className="font-medium text-slate-900 dark:text-slate-100">
+                    <p className="font-medium text-foreground">
                       {project.name}
                     </p>
                   </div>
                 </TableCell>
-                <TableCell className="text-slate-600 dark:text-slate-400">
+                <TableCell className="text-muted-foreground">
                   {new Date(project.createdAt).toLocaleDateString()}
                 </TableCell>
               </TableRow>
