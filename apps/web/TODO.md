@@ -55,32 +55,6 @@
 
 ---
 
-### 3. Error Boundaries 🚨
-
-- [ ] **Add basic error boundary**
-  - Wrap app in error boundary
-  - Show friendly error page instead of crash
-  - File: `apps/web/src/app/error.tsx` (Next.js convention)
-
-**Priority**: MEDIUM  
-**Estimated Time**: 30 minutes  
-**Why**: Prevents white screen of death
-
----
-
-### 4. 404 Page 🔍
-
-- [ ] **Create custom 404 page**
-  - File: `apps/web/src/app/not-found.tsx`
-  - Add link back to dashboard
-  - Match design system
-
-**Priority**: LOW  
-**Estimated Time**: 20 minutes  
-**Why**: Professional touch
-
----
-
 ## 🧹 Quick Cleanup Tasks
 
 ### UI Polish (Quick wins)

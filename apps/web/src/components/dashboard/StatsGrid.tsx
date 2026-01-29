@@ -18,9 +18,7 @@ export function StatsGrid({ projectsCount }: StatsGridProps) {
         <CardContent>
           <div className="text-4xl font-bold text-primary">{projectsCount}</div>
           <p className="text-xs text-muted-foreground mt-2">
-            <span className="text-primary">
-              {projectsCount} active (Coming soon)
-            </span>
+            <span className="text-primary">{projectsCount} active</span>
           </p>
         </CardContent>
       </Card>

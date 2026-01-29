@@ -10,13 +10,10 @@ export const routes = {
 
   // PROJECTS
   project: (projectId: string) => `/dashboard/projects/${projectId}`,
-  projectCreate: () => `/dashboard/projects/new`,
 
   // TASKS
   task: (projectId: string, taskId: string) =>
     `/dashboard/projects/${projectId}/tasks/${taskId}`,
-  taskCreate: (projectId: string) =>
-    `/dashboard/projects/${projectId}/tasks/new`,
 
   // API (opcional)
   api: {
