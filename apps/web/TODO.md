@@ -41,34 +41,9 @@
 
 ---
 
-### 2. Loading States Consistency 🔄
-
-- [ ] **Audit all loading states**
-  - Verify dashboard shows skeleton/spinner while loading
-  - Check project detail page
-  - Check task detail page
-  - Ensure no "flash of empty state"
-
-**Priority**: MEDIUM  
-**Estimated Time**: 30 minutes  
-**Why**: Professional UX polish
-
----
-
 ## 🧹 Quick Cleanup Tasks
 
 ### UI Polish (Quick wins)
-
-- [ ] **Remove "Coming soon" placeholders**
-  - In `StatsGrid` component (dashboard metrics)
-  - Either remove or implement real counters
-  - File: `apps/web/src/components/dashboard/StatsGrid.tsx`
-
-**Priority**: MEDIUM  
-**Estimated Time**: 1 hour (to implement real counters)  
-**Alternative**: Remove the cards entirely (10 minutes)
-
----
 
 - [ ] **Fix search bar in header**
   - Currently non-functional
@@ -78,26 +53,6 @@
 **Priority**: LOW  
 **Estimated Time**: 5 minutes (to hide) or 3 hours (to implement)  
 **Recommendation**: Hide for MVP
-
----
-
-- [ ] **Help page placeholder**
-  - Route exists but page missing: `/dashboard/help`
-  - Add simple page or remove link
-
-**Priority**: LOW  
-**Estimated Time**: 20 minutes
-
----
-
-### Code Quality
-
-- [ ] **Remove console.logs**
-  - Search for `console.log` in all files
-  - Remove or replace with proper error handling
-
-**Priority**: LOW  
-**Estimated Time**: 15 minutes
 
 ---
 
@@ -207,17 +162,12 @@
 ### Critical Path (2 hours)
 
 1. Create `.env.example` and document (15 min)
-2. Fix user profile in header (15 min)
-3. Add error boundary (30 min)
-4. Remove/fix "Coming soon" in StatsGrid (choose: 10 min to remove OR 1 hour to implement)
-5. Hide search bar (5 min)
-6. Add 404 page (20 min)
-7. Quick responsive test (15 min)
+2. Hide search bar (5 min)
+3. Quick responsive test (15 min)
 
 ### Optional (1 more hour)
 
-8. Implement real dashboard metrics (1 hour)
-9. Add help page (20 min)
-10. Accessibility audit (40 min)
+1. Implement real dashboard metrics (1 hour)
+2. Accessibility audit (40 min)
 
 ### Then STOP and move to next project ✋
