@@ -4,6 +4,7 @@
 
 ![Status](https://img.shields.io/badge/status-MVP-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
+![Docker](https://img.shields.io/badge/docker-ready-blue)
 
 ## 🎯 Project Overview
 
@@ -14,6 +15,7 @@ TaskFlow is a production-ready task management system built to demonstrate:
 - **Modern Stack**: Latest versions of NestJS, Next.js, Prisma, and PostgreSQL
 - **Professional Patterns**: JWT authentication, state management with Zustand, custom hooks
 - **Best Practices**: Validation, error handling, responsive design with TailwindCSS + shadcn/ui
+- **Docker Ready**: Full containerization with docker-compose for easy deployment
 
 ## 🏗️ Tech Stack
 
@@ -46,21 +48,48 @@ TaskFlow is a production-ready task management system built to demonstrate:
 - ✅ Responsive dashboard UI
 - ✅ Real-time state synchronization
 - ✅ Inline editing for projects and tasks
+- ✅ Docker containerization with docker-compose
 
 ## 🚀 Quick Start
 
-### Prerequisites
+### Option 1: Docker (Recommended) 🐳
+
+**Prerequisites**: Docker & Docker Compose installed
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/esteban-abanto-2709/task-management-platform.git
+cd task-management-platform
+
+# 2. Configure environment
+cd apps/docker
+cp .env.example .env
+# Edit .env with your secure passwords
+
+# 3. Start all services
+docker compose up -d
+
+# 4. Access the application
+```
+
+**📖 Full Docker documentation**: See [README.md](./apps/docker/README.md) for detailed instructions, troubleshooting, and advanced usage.
+
+---
+
+### Option 2: Manual Setup
+
+#### Prerequisites
 
 - Node.js 18+
 - PostgreSQL 14+
 - npm/yarn/pnpm
 
-### Installation
+#### Installation
 
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/yourusername/taskflow.git
+git clone https://github.com/esteban-abanto-2709/task-management-platform.git
 cd taskflow
 ```
 
@@ -124,8 +153,13 @@ npm run dev
 ## 📁 Project Structure
 
 ```
-taskflow/
+task-management-platform/
 ├── apps/
+│   ├── docker/                 # Docker orchestration & config
+│   │   ├── docker-compose.yml
+│   │   ├── .env.example
+│   │   └── README.md
+│   │
 │   ├── api/                    # NestJS Backend
 │   │   ├── src/
 │   │   │   ├── auth/          # Authentication module
@@ -133,8 +167,9 @@ taskflow/
 │   │   │   ├── projects/      # Projects module
 │   │   │   ├── tasks/         # Tasks module
 │   │   │   └── prisma/        # Prisma service
-│   │   └── prisma/
-│   │       └── schema.prisma  # Database schema
+│   │   ├── prisma/
+│   │   │   └── schema.prisma  # Database schema
+│   │   └── Dockerfile         # Backend Docker image
 │   │
 │   └── web/                    # Next.js Frontend
 │       ├── src/
@@ -145,12 +180,12 @@ taskflow/
 │       │   ├── lib/           # Utilities
 │       │   ├── store/         # Zustand stores
 │       │   └── types/         # TypeScript types
-│       └── public/
+│       ├── public/
+│       └── Dockerfile         # Frontend Docker image
 │
 ├── LICENSE
 ├── README.md
-├── Roadmap.md
-└── TODO.md files
+└── Roadmap.md
 ```
 
 ## 🎨 Architecture Highlights
@@ -240,6 +275,24 @@ npm run test
 - `PATCH /tasks/:id` - Update task (protected)
 - `DELETE /tasks/:id` - Delete task (protected)
 
+## 🐳 Docker Deployment
+
+TaskFlow includes full Docker support for easy deployment through the `apps/docker` directory:
+
+- **docker-compose.yml**: Orchestrates API, Web, and PostgreSQL
+- **Multi-stage builds**: Optimized production images
+- **Health checks**: Automatic service monitoring
+- **Volume persistence**: Database data survives container restarts
+
+**Quick Deploy**:
+
+```bash
+cd apps/docker
+docker compose up -d
+```
+
+**📖 See [docker/README.md](./apps/docker/README.md)** for complete documentation.
+
 ## 🎯 Current Status
 
 **MVP Complete** ✅ - Ready for portfolio/CV
@@ -253,6 +306,7 @@ The project demonstrates:
 - Authentication and authorization
 - State management
 - Responsive UI/UX
+- Docker containerization
 
 See [Roadmap.md](./Roadmap.md) for future enhancements.
 
@@ -263,6 +317,11 @@ MIT License - See [LICENSE](./LICENSE) file for details
 ## 👤 Author
 
 **Wilder Esteban Abanto Garcia**
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/esteban-abanto/)
+[![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/esteban-abanto-2709)
+[![Portfolio](https://img.shields.io/badge/Portfolio-2563EB?style=for-the-badge&logo=google-chrome&logoColor=white)](https://esteban-abanto.vercel.app/)
+[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:esteban.abanto.2709@gmail.com)
 
 ---
 
