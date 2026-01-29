@@ -168,6 +168,6 @@
 
 ### If you have extra time (1 more hour)
 
-5. Add ONE example test file (1 hour)
+1. Add ONE example test file (1 hour)
 
 ### Then STOP and move to next project ✋
