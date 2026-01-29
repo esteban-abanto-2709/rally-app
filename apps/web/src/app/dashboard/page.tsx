@@ -8,24 +8,24 @@ import { useProjects } from "@/hooks/useProjects";
 import { StatsGrid } from "@/components/dashboard/StatsGrid";
 import { ProjectsTable } from "@/components/dashboard/ProjectsTable";
 import { DashboardPageHeader } from "@/components/dashboard/DashboardPageHeader";
+import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
 
 export default function DashboardNewPage() {
   const router = useRouter();
-  const { projects } = useProjects();
+  const { projects, isLoading } = useProjects();
 
   const handleProjectClick = (projectId: string) => {
     router.push(routes.project(projectId));
   };
 
+  if (isLoading) {
+    return <DashboardSkeleton />;
+  }
+
   return (
     <div className="space-y-8">
-      {/* Page Header */}
       <DashboardPageHeader />
-
-      {/* Stats Grid */}
       <StatsGrid projectsCount={projects.length} />
-
-      {/* Projects Table */}
       <ProjectsTable projects={projects} onProjectClick={handleProjectClick} />
     </div>
   );

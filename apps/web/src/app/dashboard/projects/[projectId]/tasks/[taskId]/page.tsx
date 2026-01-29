@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/select";
 import { routes } from "@/lib/routes";
 
+import { TaskDetailSkeleton } from "@/components/dashboard/TaskDetailSkeleton";
+
 export default function TaskDetailPage() {
   const params = useParams();
   const projectId = params.projectId as string;
@@ -117,11 +119,7 @@ export default function TaskDetailPage() {
   };
 
   if (isAuthLoading || isTaskLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-muted-foreground">Loading...</div>
-      </div>
-    );
+    return <TaskDetailSkeleton />;
   }
 
   if (taskError || !task) {

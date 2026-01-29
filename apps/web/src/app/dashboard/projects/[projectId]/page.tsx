@@ -40,6 +40,8 @@ import { useProjectEditor } from "@/hooks/useProjectEditor";
 import { useDialogState } from "@/hooks/useDialogState";
 import { routes } from "@/lib/routes";
 
+import { ProjectDetailSkeleton } from "@/components/dashboard/ProjectDetailSkeleton";
+
 export default function ProjectDetailPage() {
   const params = useParams();
   const projectId = params.projectId as string;
@@ -131,11 +133,7 @@ export default function ProjectDetailPage() {
   };
 
   if (isAuthLoading || isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-muted-foreground">Loading...</div>
-      </div>
-    );
+    return <ProjectDetailSkeleton />;
   }
 
   if (!user || !project) {
