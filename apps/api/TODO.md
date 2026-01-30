@@ -18,36 +18,6 @@
 - [x] Validation with class-validator
 - [x] Database relationships (User → Projects → Tasks)
 
----
-
-## 🔥 CRITICAL - Must Fix Before CV Upload
-
-### 1. Environment Variables ⚠️
-
-- [ ] **Add `.env.example` validation**
-  - Document all required env vars in README
-  - Verify app fails gracefully if vars missing
-- [ ] **Secure JWT Secret**
-  - Ensure JWT_SECRET is not hardcoded anywhere
-  - Add warning in console if using default secret
-
-**Priority**: HIGH  
-**Estimated Time**: 30 minutes  
-**Why**: Security best practice, prevents obvious mistakes
-
----
-
-### 2. API Documentation 📄
-
-- [ ] **Add basic endpoint documentation**
-  - Update README.md with all endpoints
-  - Include request/response examples
-  - Document authentication headers
-
-**Priority**: HIGH  
-**Estimated Time**: 1 hour  
-**Why**: Essential for anyone reviewing your code (recruiters, etc.)
-
 ## 🧹 Quick Cleanup Tasks
 
 ### Code Quality (Optional, but recommended)
