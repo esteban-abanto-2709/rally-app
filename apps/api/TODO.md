@@ -61,22 +61,6 @@
 **Estimated Time**: 1 hour  
 **Why**: Professional polish, good UX
 
----
-
-### 4. Health Check Enhancement 🏥
-
-- [ ] **Improve `/health` endpoint**
-  - Currently works, but could add:
-    - Database connection status
-    - API version info
-    - Uptime
-
-**Priority**: LOW  
-**Estimated Time**: 30 minutes  
-**Why**: Nice-to-have for monitoring
-
----
-
 ## 🧹 Quick Cleanup Tasks
 
 ### Code Quality (Optional, but recommended)
