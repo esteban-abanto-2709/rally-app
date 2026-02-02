@@ -14,9 +14,9 @@ async function bootstrap() {
   // Global validation pipe for DTO validation
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // Remove properties not defined in DTO
-      forbidNonWhitelisted: true, // Throw error if extra properties exist
-      transform: true, // Transform payloads to DTO instances
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
       // Return detailed validation errors
       exceptionFactory: (errors) => {
         const messages = errors.map((error) => ({
@@ -34,9 +34,7 @@ async function bootstrap() {
   );
 
   const port = process.env.PORT ?? 4000;
-
   await app.listen(port);
-  console.log(`🚀 Server running on http://localhost:${port}/health`);
 }
 
 bootstrap();

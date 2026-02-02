@@ -1,12 +1,12 @@
-import { Controller, Get, HttpStatus } from '@nestjs/common';
+import { Controller, Get, ServiceUnavailableException } from '@nestjs/common';
 import { PrismaService } from './prisma/prisma.service';
 import packageJson from '../package.json';
 
 @Controller()
 export class AppController {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
-  @Get('health')
+  @Get('healthz')
   async getHealth() {
     const uptime = process.uptime();
     try {
@@ -25,7 +25,7 @@ export class AppController {
         },
       };
     } catch (error) {
-      return {
+      throw new ServiceUnavailableException({
         status: 'error',
         version: packageJson.version,
         uptime: `${Math.floor(uptime)}s`,
@@ -35,8 +35,7 @@ export class AppController {
           status: 'disconnected',
           error: error instanceof Error ? error.message : 'Unknown error',
         },
-        statusCode: HttpStatus.SERVICE_UNAVAILABLE,
-      };
+      });
     }
   }
 }
