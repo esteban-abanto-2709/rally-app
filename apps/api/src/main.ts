@@ -6,7 +6,12 @@ import { HttpExceptionFilter } from '../common/filters/http-exception.filter';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.enableCors();
+  app.enableCors({
+    origin: process.env.CORS_ORIGIN,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+  });
 
   // Global exception filter for consistent error responses
   app.useGlobalFilters(new HttpExceptionFilter());
@@ -34,7 +39,7 @@ async function bootstrap() {
   );
 
   const port = process.env.PORT ?? 4000;
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
 }
 
 bootstrap();
