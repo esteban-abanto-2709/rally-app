@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '@/providers/prisma/prisma.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import {
   ResourceNotFoundException,
   UnauthorizedResourceException,
-} from '../../common/exceptions/custom-exceptions';
-import { generateSlug } from '../utils/slug.util';
+} from '@/common/exceptions/custom-exceptions';
+import { generateSlug } from '@/utils/slug.util';
 
 @Injectable()
 export class ProjectsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async create(userId: string, createProjectDto: CreateProjectDto) {
     // Generate Slug

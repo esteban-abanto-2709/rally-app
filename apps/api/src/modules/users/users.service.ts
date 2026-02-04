@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '@/providers/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
-import { DuplicateResourceException } from '../../common/exceptions/custom-exceptions';
-import { generateSlug } from '../utils/slug.util';
+import { DuplicateResourceException } from '@/common/exceptions/custom-exceptions';
+import { generateSlug } from '@/utils/slug.util';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async create(email: string, password: string, name?: string) {
     // Check if user already exists

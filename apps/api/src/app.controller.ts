@@ -1,10 +1,10 @@
 import { Controller, Get, ServiceUnavailableException } from '@nestjs/common';
-import { PrismaService } from './prisma/prisma.service';
+import { PrismaService } from './providers/prisma/prisma.service';
 import packageJson from '../package.json';
 
 @Controller()
 export class AppController {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   @Get('healthz')
   async getHealth() {

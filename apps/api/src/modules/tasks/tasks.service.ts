@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '@/providers/prisma/prisma.service';
 import {
   ResourceNotFoundException,
   UnauthorizedResourceException,
-} from '../../common/exceptions/custom-exceptions';
-import { generateSlug } from '../utils/slug.util';
+} from '@/common/exceptions/custom-exceptions';
+import { generateSlug } from '@/utils/slug.util';
 
 @Injectable()
 export class TasksService {
