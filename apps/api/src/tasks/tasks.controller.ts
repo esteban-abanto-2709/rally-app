@@ -36,6 +36,21 @@ export class TasksController {
     return this.tasksService.findOne(id, req.user.id);
   }
 
+  @Get('slug/:slug')
+  findBySlug(
+    @Param('slug') slug: string,
+    @Request() req,
+    @Query('projectId') projectId: string,
+  ) {
+    if (!projectId) {
+      // Logic relies on projectId being present for uniqueness
+      // If projectId is missing, we could try to find ONE task or fail.
+      // Given the constraints, let's require projectId.
+      throw new Error('projectId is required');
+    }
+    return this.tasksService.findBySlug(slug, req.user.id, projectId);
+  }
+
   @Patch(':id')
   update(
     @Param('id') id: string,

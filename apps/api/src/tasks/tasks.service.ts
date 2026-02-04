@@ -6,10 +6,11 @@ import {
   ResourceNotFoundException,
   UnauthorizedResourceException,
 } from '../../common/exceptions/custom-exceptions';
+import { generateSlug } from '../utils/slug.util';
 
 @Injectable()
 export class TasksService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async create(createTaskDto: CreateTaskDto, userId: string) {
     // 1. Validate Project Ownership
@@ -25,10 +26,27 @@ export class TasksService {
       throw new UnauthorizedResourceException('project');
     }
 
+    // Generate Slug
+    let slug = generateSlug(createTaskDto.title);
+    // Check if slug exists for this project
+    let slugExists = await this.prisma.task.findFirst({
+      where: { projectId: createTaskDto.projectId, slug },
+    });
+    let counter = 1;
+
+    while (slugExists) {
+      slug = generateSlug(createTaskDto.title) + `-${counter}`;
+      slugExists = await this.prisma.task.findFirst({
+        where: { projectId: createTaskDto.projectId, slug },
+      });
+      counter++;
+    }
+
     // 2. Create Task
     return this.prisma.task.create({
       data: {
         ...createTaskDto,
+        slug,
       },
       include: {
         project: true,
@@ -73,6 +91,25 @@ export class TasksService {
 
     if (!task) {
       throw new ResourceNotFoundException('Task', id);
+    }
+
+    if (task.project.userId !== userId) {
+      throw new UnauthorizedResourceException('task');
+    }
+
+    return task;
+  }
+
+  async findBySlug(slug: string, userId: string, projectId: string) {
+    const task = await this.prisma.task.findFirst({
+      where: { slug, projectId },
+      include: {
+        project: true,
+      },
+    });
+
+    if (!task) {
+      throw new ResourceNotFoundException('Task', slug);
     }
 
     if (task.project.userId !== userId) {

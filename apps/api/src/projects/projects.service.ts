@@ -6,16 +6,34 @@ import {
   ResourceNotFoundException,
   UnauthorizedResourceException,
 } from '../../common/exceptions/custom-exceptions';
+import { generateSlug } from '../utils/slug.util';
 
 @Injectable()
 export class ProjectsService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async create(userId: string, createProjectDto: CreateProjectDto) {
+    // Generate Slug
+    let slug = generateSlug(createProjectDto.name);
+    // Check if slug exists for this user
+    let slugExists = await this.prisma.project.findFirst({
+      where: { userId, slug },
+    });
+    let counter = 1;
+
+    while (slugExists) {
+      slug = generateSlug(createProjectDto.name) + `-${counter}`;
+      slugExists = await this.prisma.project.findFirst({
+        where: { userId, slug },
+      });
+      counter++;
+    }
+
     return this.prisma.project.create({
       data: {
         ...createProjectDto,
         userId,
+        slug,
       },
     });
   }
@@ -38,6 +56,18 @@ export class ProjectsService {
 
     if (project.userId !== userId) {
       throw new UnauthorizedResourceException('project');
+    }
+
+    return project;
+  }
+
+  async findBySlug(slug: string, userId: string) {
+    const project = await this.prisma.project.findFirst({
+      where: { slug, userId },
+    });
+
+    if (!project) {
+      throw new ResourceNotFoundException('Project', slug);
     }
 
     return project;

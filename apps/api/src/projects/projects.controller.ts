@@ -17,7 +17,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 @Controller('projects')
 @UseGuards(JwtAuthGuard)
 export class ProjectsController {
-  constructor(private readonly projectsService: ProjectsService) { }
+  constructor(private readonly projectsService: ProjectsService) {}
 
   @Post()
   create(@Request() req, @Body() createProjectDto: CreateProjectDto) {
@@ -32,6 +32,11 @@ export class ProjectsController {
   @Get(':id')
   findOne(@Param('id') id: string, @Request() req) {
     return this.projectsService.findOne(id, req.user.id);
+  }
+
+  @Get('slug/:slug')
+  findBySlug(@Param('slug') slug: string, @Request() req) {
+    return this.projectsService.findBySlug(slug, req.user.id);
   }
 
   @Patch(':id')

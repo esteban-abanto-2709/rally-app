@@ -2,10 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { DuplicateResourceException } from '../../common/exceptions/custom-exceptions';
+import { generateSlug } from '../utils/slug.util';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async create(email: string, password: string, name?: string) {
     // Check if user already exists
@@ -17,6 +18,17 @@ export class UsersService {
       throw new DuplicateResourceException('User', 'email');
     }
 
+    // Generate Slug
+    let slug = generateSlug(name || email.split('@')[0]);
+    let slugExists = await this.prisma.user.findUnique({ where: { slug } });
+    let counter = 1;
+
+    while (slugExists) {
+      slug = generateSlug(name || email.split('@')[0]) + `-${counter}`;
+      slugExists = await this.prisma.user.findUnique({ where: { slug } });
+      counter++;
+    }
+
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -24,6 +36,7 @@ export class UsersService {
     const user = await this.prisma.user.create({
       data: {
         email,
+        slug,
         password: hashedPassword,
         name,
       },
@@ -43,6 +56,20 @@ export class UsersService {
   async findById(id: string) {
     const user = await this.prisma.user.findUnique({
       where: { id },
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    // Return without password
+    const { password: _, ...userWithoutPassword } = user;
+    return userWithoutPassword;
+  }
+
+  async findBySlug(slug: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { slug },
     });
 
     if (!user) {
