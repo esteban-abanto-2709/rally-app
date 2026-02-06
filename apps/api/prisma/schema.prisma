@@ -6,12 +6,21 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
+model Auth {
   id        String   @id @default(uuid())
   email     String   @unique
-  slug      String   @unique
   password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User?
+}
+
+model User {
+  id        String   @id @default(uuid())
+  slug      String   @unique
   name      String?
+  authId    String   @unique
+  auth      Auth     @relation(fields: [authId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
