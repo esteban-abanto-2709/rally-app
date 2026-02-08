@@ -21,6 +21,7 @@ import { routes } from "@/lib/routes";
 import { TaskDetailSkeleton } from "@/components/dashboard/TaskDetailSkeleton";
 import { StatusSelect } from "@/components/dashboard/StatusSelect";
 import { PrioritySelect } from "@/components/dashboard/PrioritySelect";
+import { getPriorityColorClass, getPriorityLabel } from "@/lib/priority";
 
 export default function TaskDetailPage() {
   const params = useParams();
@@ -117,25 +118,6 @@ export default function TaskDetailPage() {
         return "Done";
       default:
         return status;
-    }
-  };
-
-  const getPriorityLabel = (priority: any) => {
-    return priority?.replace("_", " ") || "MEDIUM";
-  };
-
-  const getPriorityColorClass = (priority: any) => {
-    switch (priority) {
-      case "VERY_HIGH":
-        return "bg-red-100 text-red-800 hover:bg-red-100";
-      case "HIGH":
-        return "bg-orange-100 text-orange-800 hover:bg-orange-100";
-      case "MEDIUM":
-        return "bg-yellow-100 text-yellow-800 hover:bg-yellow-100";
-      case "LOW":
-        return "bg-green-100 text-green-800 hover:bg-green-100";
-      default:
-        return "bg-gray-100 text-gray-800 hover:bg-gray-100";
     }
   };
 
@@ -290,7 +272,11 @@ export default function TaskDetailPage() {
                     <Edit2 className="w-4 h-4 mr-2" />
                     Edit Task
                   </Button>
-                  <Button variant="destructive" onClick={handleDelete}>
+                  <Button
+                    variant="ghost"
+                    className="text-destructive hover:bg-destructive/10 hover:text-destructive border border-destructive/20"
+                    onClick={handleDelete}
+                  >
                     <Trash2 className="w-4 h-4 mr-2" />
                     Delete Task
                   </Button>

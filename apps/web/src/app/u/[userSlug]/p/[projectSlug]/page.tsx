@@ -222,7 +222,11 @@ export default function ProjectDetailPage() {
                         <Button variant="outline" onClick={editor.startEditing}>
                           Edit Project
                         </Button>
-                        <Button variant="destructive" onClick={handleDelete}>
+                        <Button
+                          variant="ghost"
+                          className="text-destructive hover:bg-destructive/10 hover:text-destructive border border-destructive/20"
+                          onClick={handleDelete}
+                        >
                           <Trash2 className="w-4 h-4 mr-2" />
                           Delete Project
                         </Button>
