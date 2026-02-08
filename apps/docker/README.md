@@ -1,6 +1,6 @@
-# 🐳 Docker Deployment Guide - TaskFlow
+# 🐳 Docker Deployment Guide - Rally
 
-> **Quick Start**: Get TaskFlow running with Docker in under 5 minutes
+> **Quick Start**: Get Rally running with Docker in under 5 minutes
 
 ## 📋 Prerequisites
 

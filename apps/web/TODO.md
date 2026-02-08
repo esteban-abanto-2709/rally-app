@@ -1,4 +1,4 @@
-# 🎨 Frontend TODO - TaskFlow Web
+# 🎨 Frontend TODO - Rally Web
 
 > **Focus**: Core Platform Evolution (Rebrand + New Features)
 

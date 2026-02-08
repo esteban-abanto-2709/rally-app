@@ -1,6 +1,6 @@
-# TaskFlow - Task Management Platform
+# Rally - The transparent showcase for software development
 
-> A modern full-stack task management platform showcasing clean architecture, real-world patterns, and production-ready practices.
+> The transparent showcase for software development. A project management system that serves as a public control panel where developers work professionally AND fans/users can follow progress in real-time.
 
 ![Status](https://img.shields.io/badge/status-MVP-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
@@ -8,7 +8,7 @@
 
 ## 🎯 Project Overview
 
-TaskFlow is a production-ready task management system built to demonstrate:
+Rally is a production-ready task management system built to demonstrate:
 
 - **Clean Architecture**: Separation of concerns with NestJS modules and Next.js App Router
 - **Type Safety**: End-to-end TypeScript implementation
@@ -90,7 +90,7 @@ docker compose up -d
 
 ```bash
 git clone https://github.com/esteban-abanto-2709/task-management-platform.git
-cd taskflow
+cd task-management-platform
 ```
 
 2. **Install dependencies**
@@ -111,7 +111,7 @@ Create `apps/api/.env`:
 
 ```env
 PORT=4000
-DATABASE_URL="postgresql://user:password@localhost:5432/taskflow"
+DATABASE_URL="postgresql://user:password@localhost:5432/rally"
 JWT_SECRET="your-super-secret-jwt-key-change-in-production"
 ```
 
@@ -177,7 +177,7 @@ task-management-platform/
 │       │   ├── components/    # React components
 │       │   ├── contexts/      # React contexts
 │       │   ├── hooks/         # Custom hooks
-│       │   ├── lib/           # Utilities
+│       │   ├── lib/           # Utility functions and API client
 │       │   ├── store/         # Zustand stores
 │       │   └── types/         # TypeScript types
 │       ├── public/
@@ -277,7 +277,7 @@ npm run test
 
 ## 🐳 Docker Deployment
 
-TaskFlow includes full Docker support for easy deployment through the `apps/docker` directory:
+Rally includes full Docker support for easy deployment through the `apps/docker` directory:
 
 - **docker-compose.yml**: Orchestrates API, Web, and PostgreSQL
 - **Multi-stage builds**: Optimized production images

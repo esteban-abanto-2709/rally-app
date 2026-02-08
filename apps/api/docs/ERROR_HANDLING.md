@@ -2,7 +2,7 @@
 
 ## Overview
 
-The TaskFlow API implements a comprehensive and consistent error handling system that provides clear, actionable error messages for all API consumers.
+The Rally API implements a comprehensive and consistent error handling system that provides clear, actionable error messages for all API consumers.
 
 ## Error Response Format
 
@@ -257,14 +257,14 @@ async function createProject(projectData) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(projectData)
+      body: JSON.stringify(projectData),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      
+
       switch (error.statusCode) {
         case 400:
           // Show validation errors
@@ -276,7 +276,7 @@ async function createProject(projectData) {
           break;
         case 403:
           // Show permission error
-          alert('You don\'t have permission to do this');
+          alert("You don't have permission to do this");
           break;
         case 404:
           // Resource not found
@@ -290,7 +290,7 @@ async function createProject(projectData) {
           // Server error
           console.error('Server error:', error.message);
       }
-      
+
       throw error;
     }
 

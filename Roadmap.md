@@ -1,4 +1,4 @@
-# 🗺️ Roadmap - TaskFlow
+# 🗺️ Roadmap - Rally
 
 > **Focus**: Core Platform Evolution & Rebranding
 
@@ -33,7 +33,7 @@
 
 ### 1.4 Rebranding & UX Overhaul
 
-- [ ] **Software Dev Identity**
+- [x] **Software Dev Identity**
   - Rediseño enfocado en estética "Dev" (Dark mode first, technical typography)
   - Paleta de colores más técnica (Console colors, Syntax highlighting themes)
 - [ ] **Design System Updates**
@@ -48,9 +48,9 @@
 
 ### 2.1 DevOps & Deployment
 
-- [ ] **Docker & Docker Compose**
-  - Dockerfile para API y Web
-  - docker-compose.yml orquestando todo
+- [x] **Docker & Docker Compose**
+  - [x] Dockerfile para API y Web
+  - [x] docker-compose.yml orquestando todo
 - [ ] **CI/CD Pipeline**
 - [ ] **Deployment** (Railway/Vercel)
 

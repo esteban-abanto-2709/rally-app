@@ -1,4 +1,4 @@
-# TaskFlow Web Frontend
+# Rally Web Frontend
 
 A modern, responsive task management application built with Next.js, TypeScript, and Tailwind CSS.
 
@@ -17,7 +17,7 @@ Before you begin, ensure you have the following installed:
 
 - **Node.js** 18.x or higher
 - **npm**, **yarn**, **pnpm**, or **bun** package manager
-- **TaskFlow Backend API** running (default: `http://localhost:4000`)
+- **Rally Backend API** running (default: `http://localhost:4000`)
 
 ## ⚙️ Environment Variables
 
@@ -33,9 +33,9 @@ This project requires environment variables to connect to the backend API.
 
 2. **Configure your environment variables** in `.env.local`:
 
-   | Variable              | Description                           | Default                 | Required |
-   | --------------------- | ------------------------------------- | ----------------------- | -------- |
-   | `NEXT_PUBLIC_API_URL` | Base URL for the TaskFlow backend API | `http://localhost:4000` | ✅ Yes   |
+   | Variable              | Description                        | Default                 | Required |
+   | --------------------- | ---------------------------------- | ----------------------- | -------- |
+   | `NEXT_PUBLIC_API_URL` | Base URL for the Rally backend API | `http://localhost:4000` | ✅ Yes   |
 
    **Example `.env.local` file:**
 
@@ -195,4 +195,4 @@ This app can be deployed to any platform that supports Next.js:
 
 ## 📝 License
 
-This project is part of the TaskFlow application suite.
+This project is part of the Rally application suite.

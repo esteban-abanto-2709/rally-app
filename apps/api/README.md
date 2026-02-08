@@ -1,4 +1,4 @@
-# 🚀 TaskFlow API
+# 🚀 Rally API
 
 A robust REST API built with NestJS, Prisma, and PostgreSQL for managing projects and tasks with user authentication.
 
@@ -778,7 +778,7 @@ Check the API health and database connection.
   "version": "0.0.1",
   "uptime": "3600s",
   "timestamp": "2025-01-29T10:00:00.000Z",
-  "service": "TaskFlow API",
+  "service": "Rally API",
   "database": {
     "status": "connected",
     "type": "PostgreSQL"
@@ -794,7 +794,7 @@ Check the API health and database connection.
   "version": "0.0.1",
   "uptime": "3600s",
   "timestamp": "2025-01-29T10:00:00.000Z",
-  "service": "TaskFlow API",
+  "service": "Rally API",
   "database": {
     "status": "disconnected",
     "error": "Connection error message"
