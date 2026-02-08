@@ -32,7 +32,6 @@ export default function TaskDetailPage() {
   const router = useRouter();
   const { user, isLoading: isAuthLoading } = useAuth();
 
-  // Need project first to resolve ID.
   const { getProjectBySlug, isLoading: isLoadingProjects } = useProjects();
   const project = getProjectBySlug(projectSlug) || null;
   const projectId = project?.id;
@@ -47,7 +46,6 @@ export default function TaskDetailPage() {
 
   const [task, setTask] = useState<Task | null>(null);
 
-  // ✨ Usar el hook de edición
   const editor = useTaskEditor({
     task,
     onUpdate: async (id, data) => {
@@ -57,14 +55,6 @@ export default function TaskDetailPage() {
     },
   });
 
-  // Redirect if not authenticated
-  useEffect(() => {
-    if (!isAuthLoading && !user) {
-      router.push(routes.login());
-    }
-  }, [user, isAuthLoading, router]);
-
-  // Load task data
   useEffect(() => {
     const fetchTask = async () => {
       if (!user || !taskSlug || !projectId) return;
@@ -141,13 +131,11 @@ export default function TaskDetailPage() {
     );
   }
 
-  // Ensure task is present for rendering
   if (!task) return null;
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="max-w-2xl mx-auto space-y-6">
-        {/* Back Button */}
+      <div className="max-w-4xl mx-auto space-y-6">
         <Button variant="ghost" asChild>
           <Link href={routes.project(userSlug, projectSlug)}>
             <ArrowLeft className="w-4 h-4 mr-2" />

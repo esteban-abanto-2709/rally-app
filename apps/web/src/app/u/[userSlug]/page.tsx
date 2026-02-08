@@ -8,7 +8,6 @@ import { StatsGrid } from "@/components/dashboard/StatsGrid";
 import { ProjectsTable } from "@/components/dashboard/ProjectsTable";
 import { DashboardPageHeader } from "@/components/dashboard/DashboardPageHeader";
 import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
-import { useEffect } from "react";
 
 export default function UserDashboardPage() {
   const router = useRouter();
@@ -17,16 +16,9 @@ export default function UserDashboardPage() {
   const { projects, isLoading } = useProjects();
   const { user } = useAuth();
 
-  useEffect(() => {
-    // Optional: Check if userSlug matches logged user
-    // if (user && user.slug !== userSlug) { ... }
-  }, [user, userSlug]);
-
   const handleProjectClick = (projectId: string) => {
-    // Find project to get slug
     const project = projects.find((p) => p.id === projectId);
     if (project && user) {
-      // Use user.slug or userSlug from params? Prefer params to keep context.
       router.push(routes.project(userSlug, project.slug));
     }
   };
@@ -37,9 +29,16 @@ export default function UserDashboardPage() {
 
   return (
     <div className="space-y-8">
-      <DashboardPageHeader />
-      <StatsGrid projectsCount={projects.length} />
-      <ProjectsTable projects={projects} onProjectClick={handleProjectClick} />
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto space-y-6">
+          <DashboardPageHeader />
+          <StatsGrid projectsCount={projects.length} />
+          <ProjectsTable
+            projects={projects}
+            onProjectClick={handleProjectClick}
+          />
+        </div>
+      </div>
     </div>
   );
 }

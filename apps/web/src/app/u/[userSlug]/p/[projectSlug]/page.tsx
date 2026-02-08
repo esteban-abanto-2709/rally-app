@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "@/contexts/auth-context";
 import { Button } from "@/components/ui/button";
@@ -58,28 +58,19 @@ export default function ProjectDetailPage() {
     createTask,
     updateTaskStatus,
     updateTaskPriority,
-  } = useTasks({ projectId }); // projectId can be undefined, hook handles it
+  } = useTasks({ projectId });
 
   const isLoading = isLoadingProjects || (projectId && isLoadingTasks);
 
   const router = useRouter();
   const { user, isLoading: isAuthLoading } = useAuth();
 
-  // ✨ Usar el hook de edición
   const editor = useProjectEditor({
     project,
     onUpdate: updateProject,
   });
-
-  // ✨ Usar el hook de diálogo
   const taskDialog = useDialogState();
   const [isCreatingTask, setIsCreatingTask] = useState(false);
-
-  useEffect(() => {
-    if (!isAuthLoading && !user) {
-      router.push(routes.login());
-    }
-  }, [user, isAuthLoading, router]);
 
   const handleDelete = async () => {
     if (
@@ -155,10 +146,8 @@ export default function ProjectDetailPage() {
 
   return (
     <div className="space-y-8">
-      {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto space-y-6">
-          {/* Back Button */}
           <Button variant="ghost" asChild>
             <Link href={routes.userDashboard(userSlug)}>
               <ArrowLeft className="w-4 h-4 mr-2" />
@@ -166,7 +155,6 @@ export default function ProjectDetailPage() {
             </Link>
           </Button>
 
-          {/* Project Header */}
           <Card>
             <CardHeader>
               <div className="flex items-start justify-between">
@@ -250,7 +238,6 @@ export default function ProjectDetailPage() {
             </CardContent>
           </Card>
 
-          {/* Tasks Section */}
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
