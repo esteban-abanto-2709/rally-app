@@ -108,7 +108,8 @@ export function useTaskEditor({ task, onUpdate }: UseTaskEditorOptions) {
     };
 
     try {
-      await onUpdate(task.id, updateData);
+      // Usamos slug porque ahora la API de tasks es jerárquica y useTasks espera slug
+      await onUpdate(task.slug, updateData);
       setIsEditing(false);
     } catch (error) {
       console.error("Failed to update task:", error);

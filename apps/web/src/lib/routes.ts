@@ -5,8 +5,12 @@ export const routes = {
   userDashboard: (userSlug: string) => `/u/${userSlug}`,
   project: (userSlug: string, projectSlug: string) =>
     `/u/${userSlug}/p/${projectSlug}`,
-  task: (userSlug: string, projectSlug: string, taskSlug: string) =>
-    `/u/${userSlug}/p/${projectSlug}/t/${taskSlug}`,
+  task: (
+    userSlug: string,
+    projectSlug: string,
+    featureSlug: string,
+    taskSlug: string,
+  ) => `/u/${userSlug}/p/${projectSlug}/f/${featureSlug}/t/${taskSlug}`,
 
   help: (userSlug: string) => `/u/${userSlug}/help`,
 
@@ -17,16 +21,20 @@ export const routes = {
       me: () => "/auth/me",
     },
     projects: {
-      list: () => "/projects",
-      detail: (projectId: string) => `/projects/${projectId}`,
-      bySlug: (slug: string) => `/projects/slug/${slug}`,
+      list: () => "/p",
+      detail: (slug: string) => `/p/${slug}`, // Changed to slug
+      features: (projectSlug: string) => `/p/${projectSlug}/f`, // New
+    },
+    features: {
+      detail: (projectSlug: string, featureSlug: string) =>
+        `/p/${projectSlug}/f/${featureSlug}`,
+      create: (projectSlug: string) => `/p/${projectSlug}/f`,
     },
     tasks: {
-      list: (projectId?: string) =>
-        projectId ? `/tasks?projectId=${projectId}` : "/tasks",
-      detail: (taskId: string) => `/tasks/${taskId}`,
-      bySlug: (slug: string, projectId: string) =>
-        `/tasks/slug/${slug}?projectId=${projectId}`,
+      list: (projectSlug: string, featureSlug: string) =>
+        `/p/${projectSlug}/f/${featureSlug}/t`,
+      detail: (projectSlug: string, featureSlug: string, taskSlug: string) =>
+        `/p/${projectSlug}/f/${featureSlug}/t/${taskSlug}`,
     },
   },
 } as const;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react"; // Added useEffect
 import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "@/contexts/auth-context";
 import { Button } from "@/components/ui/button";
@@ -23,87 +23,138 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CreateFeatureDto } from "@/types/feature";
-import { ArrowLeft, Save, Trash2, Plus, Layers } from "lucide-react";
+import { Task, CreateTaskDto, TaskStatus, Priority } from "@/types/task";
+import { Feature, CreateFeatureDto } from "@/types/feature"; // Import Feature type
+import { ArrowLeft, Save, Trash2, Plus } from "lucide-react";
 import Link from "next/link";
 
-import { useProjects } from "@/hooks/useProjects";
-import { useFeatures } from "@/hooks/useFeatures";
-import { useProjectEditor } from "@/hooks/useProjectEditor";
+// Removed useProjects
+import { useTasks } from "@/hooks/useTasks";
+import { useFeatures } from "@/hooks/useFeatures"; // Import useFeatures
+import { useFeatureEditor } from "@/hooks/useFeatureEditor"; // Import hook
 import { useDialogState } from "@/hooks/useDialogState";
 import { routes } from "@/lib/routes";
 
-import { ProjectDetailSkeleton } from "@/components/dashboard/ProjectDetailSkeleton";
+import { ProjectDetailSkeleton } from "@/components/dashboard/ProjectDetailSkeleton"; // Kept for now, could be FeatureDetailSkeleton
+import { StatusSelect } from "@/components/dashboard/StatusSelect";
+import { PrioritySelect } from "@/components/dashboard/PrioritySelect";
 
-export default function ProjectDetailPage() {
+export default function FeatureDetailPage() {
   const params = useParams();
   const userSlug = params.userSlug as string;
   const projectSlug = params.projectSlug as string;
+  const featureSlug = params.featureSlug as string;
+
+  // Removed useProjects and related destructuring
 
   const {
-    isLoading: isLoadingProjects,
-    updateProject,
-    deleteProject,
-    getProjectBySlug,
-  } = useProjects();
+    isLoading: isLoadingFeatures, // Changed from isLoadingProjects
+    getFeature, // From useFeatures
+    updateFeature, // From useFeatures
+    deleteFeature, // From useFeatures
+  } = useFeatures({ projectSlug }); // Use useFeatures for feature operations
 
-  const project = getProjectBySlug(projectSlug) || null;
+  const [feature, setFeature] = useState<Feature | null>(null); // State for the current feature
 
+  useEffect(() => {
+    if (featureSlug) {
+      getFeature(featureSlug).then(setFeature);
+    }
+  }, [featureSlug, getFeature]);
+
+  /*
+   * Feature: Tasks are now fetched using hierarchical slugs.
+   * We pass projectSlug and featureSlug to the hook.
+   */
   const {
-    features,
-    isLoading: isLoadingFeatures,
-    createFeature,
-  } = useFeatures({ projectSlug });
+    tasks,
+    isLoading: isLoadingTasks,
+    createTask,
+    updateTaskStatus,
+    updateTaskPriority,
+  } = useTasks({ projectSlug, featureSlug });
 
-  const isLoading = isLoadingProjects || isLoadingFeatures;
+  const isLoading = isLoadingFeatures || (feature && isLoadingTasks); // Updated isLoading logic
 
   const router = useRouter();
   const { user, isLoading: isAuthLoading } = useAuth();
 
-  const editor = useProjectEditor({
-    project,
-    onUpdate: updateProject,
+  const handleUpdateFeature = async (
+    slug: string,
+    data: Partial<CreateFeatureDto>,
+  ) => {
+    const updated = await updateFeature(slug, data);
+    if (updated) {
+      setFeature(updated);
+    }
+    return updated;
+  };
+
+  const editor = useFeatureEditor({
+    feature,
+    onUpdate: handleUpdateFeature,
   });
-  const featureDialog = useDialogState();
-  const [isCreatingFeature, setIsCreatingFeature] = useState(false);
+  const taskDialog = useDialogState();
+  const [isCreatingTask, setIsCreatingTask] = useState(false);
 
   const handleDelete = async () => {
     if (
-      !project ||
+      !feature || // Check feature instead of project
       !confirm(
-        "Are you sure you want to delete this project? This action cannot be undone.",
+        "Are you sure you want to delete this feature? This action cannot be undone.", // Updated message
       )
     ) {
       return;
     }
 
     try {
-      await deleteProject(project.id);
-      router.push(routes.userDashboard(userSlug));
+      await deleteFeature(feature.id); // Delete feature
+      router.push(routes.project(userSlug, projectSlug)); // Redirect to project detail
     } catch (error) {
-      console.error("Failed to delete project:", error);
+      console.error("Failed to delete feature:", error); // Updated error message
     }
   };
 
-  const handleCreateFeature = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleCreateTask = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!project) return;
+    if (!feature) return; // Check feature instead of project
 
-    setIsCreatingFeature(true);
+    setIsCreatingTask(true);
     const formData = new FormData(e.currentTarget);
-    const featureData: CreateFeatureDto = {
-      name: formData.get("name") as string,
+    const taskData: CreateTaskDto = {
+      title: formData.get("title") as string,
       description: (formData.get("description") as string) || undefined,
+      projectId: feature.projectId,
     };
 
     try {
-      await createFeature(featureData);
-      featureDialog.close();
+      await createTask(taskData);
+      taskDialog.close();
       e.currentTarget.reset();
     } catch (error) {
-      console.error("Failed to create feature:", error);
+      console.error("Failed to create task:", error);
     } finally {
-      setIsCreatingFeature(false);
+      setIsCreatingTask(false);
+    }
+  };
+
+  /*
+   * Updated handlers to accept the full Task object.
+   * This is required because the new useTasks hook needs the task's slug for updates.
+   */
+  const handleStatusChange = async (task: Task, newStatus: TaskStatus) => {
+    try {
+      await updateTaskStatus(task, newStatus);
+    } catch (error) {
+      console.error("Failed to update task status:", error);
+    }
+  };
+
+  const handlePriorityChange = async (task: Task, newPriority: Priority) => {
+    try {
+      await updateTaskPriority(task, newPriority);
+    } catch (error) {
+      console.error("Failed to update task priority:", error);
     }
   };
 
@@ -111,10 +162,11 @@ export default function ProjectDetailPage() {
     return <ProjectDetailSkeleton />;
   }
 
-  if (!user || !project) {
+  if (!user || !feature) {
+    // Check feature instead of project
     return (
       <div className="container mx-auto px-4 py-8 text-center text-muted-foreground">
-        Project not found
+        Feature not found {/* Updated message */}
       </div>
     );
   }
@@ -124,13 +176,14 @@ export default function ProjectDetailPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto space-y-6">
           <Button variant="ghost" asChild>
-            <Link href={routes.userDashboard(userSlug)}>
+            <Link href={routes.project(userSlug, projectSlug)}>
+              {" "}
+              {/* Corrected back link */}
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Dashboard
+              Back to Project
             </Link>
           </Button>
 
-          {/* Project Details Card */}
           <Card>
             <CardHeader>
               <div className="flex items-start justify-between">
@@ -143,7 +196,7 @@ export default function ProjectDetailPage() {
                           onChange={(e) =>
                             editor.handleChange("name", e.target.value)
                           }
-                          placeholder="Project name"
+                          placeholder="Feature name"
                           className="text-2xl font-bold"
                           disabled={editor.isSaving}
                         />
@@ -154,7 +207,7 @@ export default function ProjectDetailPage() {
                           onChange={(e) =>
                             editor.handleChange("description", e.target.value)
                           }
-                          placeholder="Project description (optional)"
+                          placeholder="Feature description (optional)"
                           rows={3}
                           disabled={editor.isSaving}
                         />
@@ -178,13 +231,15 @@ export default function ProjectDetailPage() {
                     </>
                   ) : (
                     <>
-                      <CardTitle className="text-3xl">{project.name}</CardTitle>
+                      <CardTitle className="text-3xl">{feature.name}</CardTitle>{" "}
+                      {/* Use feature.name */}
                       <p className="text-muted-foreground">
-                        {project.description || "No description"}
+                        {feature.description || "No description"}{" "}
+                        {/* Use feature.description */}
                       </p>
                       <div className="flex gap-2">
                         <Button variant="outline" onClick={editor.startEditing}>
-                          Edit Project
+                          Edit Feature {/* Updated button text */}
                         </Button>
                         <Button
                           variant="ghost"
@@ -192,7 +247,7 @@ export default function ProjectDetailPage() {
                           onClick={handleDelete}
                         >
                           <Trash2 className="w-4 h-4 mr-2" />
-                          Delete Project
+                          Delete Feature {/* Updated button text */}
                         </Button>
                       </div>
                     </>
@@ -204,69 +259,70 @@ export default function ProjectDetailPage() {
               <div className="flex gap-6 text-sm text-muted-foreground">
                 <div>
                   <span className="font-medium">Created:</span>{" "}
-                  {new Date(project.createdAt).toLocaleDateString()}
+                  {new Date(feature.createdAt).toLocaleDateString()}{" "}
+                  {/* Use feature.createdAt */}
                 </div>
                 <div>
                   <span className="font-medium">Updated:</span>{" "}
-                  {new Date(project.updatedAt).toLocaleDateString()}
+                  {new Date(feature.updatedAt).toLocaleDateString()}{" "}
+                  {/* Use feature.updatedAt */}
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Features List Card */}
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle className="text-xl">
-                  Features ({features.length})
+                  Tasks ({tasks.length})
                 </CardTitle>
                 <Dialog
-                  open={featureDialog.isOpen}
-                  onOpenChange={featureDialog.setIsOpen}
+                  open={taskDialog.isOpen}
+                  onOpenChange={taskDialog.setIsOpen}
                 >
                   <DialogTrigger asChild>
                     <Button>
                       <Plus className="w-4 h-4 mr-2" />
-                      New Feature
+                      New Task
                     </Button>
                   </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
-                      <DialogTitle>Create New Feature</DialogTitle>
+                      <DialogTitle>Create New Task</DialogTitle>
                       <DialogDescription>
-                        Add a new feature to organize tasks in this project
+                        Add a new task to this project
                       </DialogDescription>
                     </DialogHeader>
-                    <form onSubmit={handleCreateFeature} className="space-y-4">
+                    <form onSubmit={handleCreateTask} className="space-y-4">
                       <div className="space-y-2">
                         <Input
-                          id="name"
-                          name="name"
-                          placeholder="Feature name"
+                          id="title"
+                          name="title"
+                          placeholder="Task title"
                           required
-                          disabled={isCreatingFeature}
+                          disabled={isCreatingTask}
                         />
                       </div>
                       <div className="space-y-2">
                         <Textarea
                           id="description"
                           name="description"
-                          placeholder="Feature description (optional)"
-                          disabled={isCreatingFeature}
+                          placeholder="Task description (optional)"
+                          disabled={isCreatingTask}
                         />
                       </div>
                       <div className="flex gap-3 justify-end">
                         <Button
                           type="button"
                           variant="outline"
-                          onClick={featureDialog.close}
-                          disabled={isCreatingFeature}
+                          onClick={taskDialog.close}
+                          disabled={isCreatingTask}
                         >
                           Cancel
                         </Button>
-                        <Button type="submit" disabled={isCreatingFeature}>
-                          {isCreatingFeature ? "Creating..." : "Create Feature"}
+                        <Button type="submit" disabled={isCreatingTask}>
+                          {isCreatingTask ? "Creating..." : "Create Task"}
                         </Button>
                       </div>
                     </form>
@@ -275,59 +331,62 @@ export default function ProjectDetailPage() {
               </div>
             </CardHeader>
             <CardContent>
-              {features.length === 0 ? (
+              {tasks.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12">
-                  <div className="bg-muted/50 p-4 rounded-full mb-4">
-                    <Layers className="w-8 h-8 text-muted-foreground" />
-                  </div>
-                  <p className="text-lg font-medium mb-2">No features yet</p>
-                  <p className="text-muted-foreground mb-4 text-center max-w-sm">
-                    Create features to organize your tasks into logical groups,
-                    modules, or epics.
+                  <p className="text-muted-foreground mb-4">
+                    No tasks yet. Create your first task to get started!
                   </p>
-                  <Button onClick={featureDialog.open}>
+                  <Button onClick={taskDialog.open}>
                     <Plus className="w-4 h-4 mr-2" />
-                    Create Feature
+                    Create Task
                   </Button>
                 </div>
               ) : (
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Feature</TableHead>
-                      <TableHead>Description</TableHead>
+                      <TableHead>Task</TableHead>
+                      <TableHead>Priority</TableHead>
                       <TableHead>Created</TableHead>
-                      <TableHead className="w-[100px]">Actions</TableHead>
+                      <TableHead>Status</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {features.map((feature) => (
-                      <TableRow key={feature.id}>
+                    {tasks.map((task) => (
+                      <TableRow key={task.id}>
                         <TableCell>
                           <div>
                             <Link
-                              href={`/u/${userSlug}/p/${projectSlug}/f/${feature.slug}`}
-                              className="font-medium hover:underline flex items-center gap-2"
+                              href={routes.task(
+                                userSlug,
+                                projectSlug,
+                                featureSlug,
+                                task.slug,
+                              )}
+                              className="font-medium hover:underline"
                             >
-                              <Layers className="w-4 h-4 text-muted-foreground" />
-                              {feature.name}
+                              {task.title}
                             </Link>
                           </div>
                         </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {feature.description || "-"}
+                        <TableCell>
+                          <PrioritySelect
+                            value={task.priority}
+                            onChange={(value) =>
+                              handlePriorityChange(task, value)
+                            }
+                          />
                         </TableCell>
                         <TableCell className="text-muted-foreground">
-                          {new Date(feature.createdAt).toLocaleDateString()}
+                          {new Date(task.createdAt).toLocaleDateString()}
                         </TableCell>
                         <TableCell>
-                          <Button variant="ghost" size="sm" asChild>
-                            <Link
-                              href={`/u/${userSlug}/p/${projectSlug}/f/${feature.slug}`}
-                            >
-                              Open
-                            </Link>
-                          </Button>
+                          <StatusSelect
+                            value={task.status}
+                            onChange={(value) =>
+                              handleStatusChange(task, value)
+                            }
+                          />
                         </TableCell>
                       </TableRow>
                     ))}

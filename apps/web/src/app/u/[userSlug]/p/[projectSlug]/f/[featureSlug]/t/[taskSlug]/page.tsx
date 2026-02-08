@@ -6,7 +6,6 @@ import Link from "next/link";
 import { ArrowLeft, Edit2, Trash2, Save } from "lucide-react";
 
 import { useAuth } from "@/contexts/auth-context";
-import { useProjects } from "@/hooks/useProjects";
 import { useTasks } from "@/hooks/useTasks";
 import { useTaskEditor } from "@/hooks/useTaskEditor";
 import { Task, TaskStatus } from "@/types/task";
@@ -15,8 +14,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-
-import { routes } from "@/lib/routes";
 
 import { TaskDetailSkeleton } from "@/components/dashboard/TaskDetailSkeleton";
 import { StatusSelect } from "@/components/dashboard/StatusSelect";
@@ -27,22 +24,24 @@ export default function TaskDetailPage() {
   const params = useParams();
   const userSlug = params.userSlug as string;
   const projectSlug = params.projectSlug as string;
+  const featureSlug = params.featureSlug as string;
   const taskSlug = params.taskSlug as string;
 
   const router = useRouter();
   const { user, isLoading: isAuthLoading } = useAuth();
 
-  const { getProjectBySlug, isLoading: isLoadingProjects } = useProjects();
-  const project = getProjectBySlug(projectSlug) || null;
-  const projectId = project?.id;
+  // We don't strictly need the project object anymore for the task operations
+  // but we might want it for breadcrumbs or other details.
+  // const { getProjectBySlug, isLoading: isLoadingProjects } = useProjects();
+  // const project = getProjectBySlug(projectSlug) || null;
 
   const {
-    getTaskBySlug,
+    getTask, // Using getTask instead of getTaskBySlug as it now accepts slug
     updateTask,
     deleteTask,
     isLoading: isTaskLoading,
     error: taskError,
-  } = useTasks({ projectId, autoLoad: false });
+  } = useTasks({ projectSlug, featureSlug, autoLoad: false });
 
   const [task, setTask] = useState<Task | null>(null);
 
@@ -57,20 +56,21 @@ export default function TaskDetailPage() {
 
   useEffect(() => {
     const fetchTask = async () => {
-      if (!user || !taskSlug || !projectId) return;
+      // We only need user and slugs now
+      if (!user || !taskSlug || !projectSlug || !featureSlug) return;
 
       try {
-        const data = await getTaskBySlug(taskSlug, projectId);
+        const data = await getTask(taskSlug);
         setTask(data);
       } catch (err) {
         console.error("Failed to fetch task:", err);
       }
     };
 
-    if (user && taskSlug && projectId) {
+    if (user && taskSlug) {
       fetchTask();
     }
-  }, [user, taskSlug, projectId, getTaskBySlug]);
+  }, [user, taskSlug, projectSlug, featureSlug, getTask]);
 
   const handleDelete = async () => {
     if (!task || !confirm("Are you sure you want to delete this task?")) {
@@ -78,8 +78,8 @@ export default function TaskDetailPage() {
     }
 
     try {
-      await deleteTask(task.id);
-      router.push(routes.project(userSlug, projectSlug));
+      await deleteTask(task.slug);
+      router.push(`/u/${userSlug}/p/${projectSlug}/f/${featureSlug}`); // Navigate back to Feature Page
     } catch (error) {
       console.error("Failed to delete task:", error);
     }
@@ -111,17 +111,19 @@ export default function TaskDetailPage() {
     }
   };
 
-  if (isAuthLoading || (projectId && isTaskLoading) || isLoadingProjects) {
+  // Removed projectId and isLoadingProjects from loading check
+  if (isAuthLoading || isTaskLoading) {
     return <TaskDetailSkeleton />;
   }
 
-  if ((!task && !isTaskLoading) || !project) {
+  // Removed project check
+  if (!task && !isTaskLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
         <Button variant="ghost" asChild className="mb-4">
-          <Link href={routes.project(userSlug, projectSlug)}>
+          <Link href={`/u/${userSlug}/p/${projectSlug}/f/${featureSlug}`}>
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Project
+            Back to Feature
           </Link>
         </Button>
         <div className="text-center text-destructive">
@@ -137,9 +139,9 @@ export default function TaskDetailPage() {
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto space-y-6">
         <Button variant="ghost" asChild>
-          <Link href={routes.project(userSlug, projectSlug)}>
+          <Link href={`/u/${userSlug}/p/${projectSlug}/f/${featureSlug}`}>
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Project
+            Back to Feature
           </Link>
         </Button>
 
