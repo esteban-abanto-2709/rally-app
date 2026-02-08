@@ -1,10 +1,10 @@
-name: taskflow
+name: rally
 
 services:
   # PostgreSQL Database
   postgres:
     image: postgres:16-alpine
-    container_name: taskflow-sql
+    container_name: rally-sql
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
@@ -15,7 +15,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - taskflow-network
+      - rally-network
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
       interval: 10s
@@ -27,7 +27,7 @@ services:
     build:
       context: ../api
       dockerfile: Dockerfile
-    container_name: taskflow-api
+    container_name: rally-api
     restart: unless-stopped
     environment:
       PORT: 4000
@@ -42,7 +42,7 @@ services:
       postgres:
         condition: service_healthy
     networks:
-      - taskflow-network
+      - rally-network
     volumes:
       # Optional: Mount for development hot-reload
       # - ./apps/api/src:/app/src
@@ -58,7 +58,7 @@ services:
     build:
       context: ../web
       dockerfile: Dockerfile
-    container_name: taskflow-web
+    container_name: rally-web
     restart: unless-stopped
     environment:
       NEXT_PUBLIC_API_URL: http://localhost:4000
@@ -68,7 +68,7 @@ services:
     depends_on:
       - api
     networks:
-      - taskflow-network
+      - rally-network
     volumes:
       # Optional: Mount for development hot-reload
       # - ./apps/web/src:/app/src
@@ -76,7 +76,7 @@ services:
       - /app/node_modules
 
 networks:
-  taskflow-network:
+  rally-network:
     driver: bridge
 
 volumes:
