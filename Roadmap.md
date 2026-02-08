@@ -25,7 +25,7 @@
 
 ### 1.3 Feature-Based Organization (New Layer)
 
-- [ ] **Feature Layer Implementation**
+- [x] **Feature Layer Implementation**
   - Nueva entidad "Features" entre Proyectos y Tareas
   - Casos de uso: "Enemigos", "Login System", "Inventory", etc.
   - Relación: Project -> Features -> Tasks
@@ -36,7 +36,7 @@
 - [x] **Software Dev Identity**
   - Rediseño enfocado en estética "Dev" (Dark mode first, technical typography)
   - Paleta de colores más técnica (Console colors, Syntax highlighting themes)
-- [ ] **Design System Updates**
+- [x] **Design System Updates**
   - Nuevos componentes de UI alineados al rebrand
   - Mejora en la densidad de información para power users
 
@@ -52,7 +52,6 @@
   - [x] Dockerfile para API y Web
   - [x] docker-compose.yml orquestando todo
 - [ ] **CI/CD Pipeline**
-- [ ] **Deployment** (Railway/Vercel)
 
 ### 2.2 Quality & Security
 
@@ -79,3 +78,5 @@
 2.  **Backend Logic** (Features CRUD, Task Updates)
 3.  **Frontend Rebranding** (Theme, Colors)
 4.  **Frontend Logic** (Features UI, Priority UI)
+5.  **CI/CD Pipeline**
+6.  **Deployment** (Railway/Vercel)

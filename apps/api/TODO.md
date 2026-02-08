@@ -10,12 +10,12 @@
   - Add `Visibility` enum (PUBLIC, PRIVATE) to Project
   - [x] Add `Priority` enum (VERY_HIGH...VERY_LOW) to Task
   - [x] Rename `TaskStatus` OPEN -> TODO (and IN_PROGRESS -> DOING)
-  - Create `Feature` model (id, name, description, projectId)
-  - Update relations (Project -> Features -> Tasks)
+  - [x] Create `Feature` model (id, name, description, projectId)
+  - [x] Update relations (Project -> Features -> Tasks)
 
 ### API Features
 
-- [ ] **Features Module**
+- [x] **Features Module**
   - Create CRUD endpoints for Features
   - Ensure Project ownership validation
 - [ ] **Task Enhancements**

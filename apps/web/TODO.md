@@ -6,7 +6,7 @@
 
 ### Rebranding & Design System
 
-- [ ] **Visual Identity Refresh**
+- [x] **Visual Identity Refresh**
   - Implement "Software Dev" aesthetic (Modern, Dark, Technical)
   - Update global color palette and typography
   - Redesign Project Card and Task Card components
@@ -23,7 +23,7 @@
   - [x] Input: Priority selector in Task Form
   - [ ] Sort/Filter by Priority
 
-- [ ] **Feature Management**
+- [x] **Feature Management**
   - UI for creating/managing Features within a Project
   - "Group by Feature" view
   - Task Form update: Select Feature
