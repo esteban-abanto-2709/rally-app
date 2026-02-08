@@ -23,7 +23,7 @@ export default function HelpPage() {
         </Button>
         <div>
           <h1 className="text-3xl font-bold">Help & Support</h1>
-          <p className="text-muted-foreground">Get help with TaskFlow</p>
+          <p className="text-muted-foreground">Get help with Rally</p>
         </div>
       </div>
 
@@ -37,8 +37,7 @@ export default function HelpPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              Learn how to use TaskFlow effectively with our comprehensive
-              guides.
+              Learn how to use Rally effectively with our comprehensive guides.
             </p>
             <div className="space-y-2">
               <h4 className="font-medium text-sm">Quick Start Guides:</h4>
@@ -64,7 +63,7 @@ export default function HelpPage() {
             </p>
             <div className="space-y-2">
               <p className="text-sm">
-                <strong>Email:</strong> support@taskflow.example
+                <strong>Email:</strong> support@rally.so
               </p>
               <p className="text-sm text-muted-foreground">
                 We typically respond within 24 hours.

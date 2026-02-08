@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/auth-context";
 
-import { Search, Sparkles, LogOut, User as UserIcon } from "lucide-react";
+import { Search, Terminal, LogOut, User as UserIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -31,11 +31,11 @@ export default function DashboardHeader() {
       <div className="h-16 px-6 flex items-center justify-between gap-8">
         {/* Logo - Left */}
         <div className="flex items-center gap-2 shrink-0">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
-            <Sparkles className="w-5 h-5 text-primary-foreground" />
+          <div className="w-8 h-8 rounded-lg bg-linear-to-br from-primary to-variable-purple flex items-center justify-center shadow-lg shadow-primary/20">
+            <Terminal className="w-5 h-5 text-primary-foreground" />
           </div>
-          <h1 className="font-bold text-xl bg-primary bg-clip-text text-transparent">
-            TaskFlow
+          <h1 className="font-bold text-xl bg-linear-to-r from-primary to-variable-purple bg-clip-text text-transparent">
+            Rally
           </h1>
         </div>
 

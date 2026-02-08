@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TaskFlow",
-  description: "Simple task management platform",
+  title: "Rally",
+  description: "The transparent showcase for software development",
 };
 
 export default function RootLayout({

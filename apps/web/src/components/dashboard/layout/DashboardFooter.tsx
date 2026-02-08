@@ -9,7 +9,7 @@ export default function DashboardFooter() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
           {/* Left Side */}
           <div className="flex items-center gap-4">
-            <span>© {currentYear} TaskFlow</span>
+            <span>© {currentYear} Rally</span>
             <span className="hidden sm:inline text-border">•</span>
             <span className="hidden sm:inline">
               Made with ❤️ for productivity

@@ -2,7 +2,7 @@
 
 import {
   LayoutDashboard,
-  Sparkles,
+  Terminal,
   FolderKanban,
   HelpCircle,
 } from "lucide-react";
@@ -83,8 +83,8 @@ export default function DashboardSidebar() {
       <div className="p-3 border-t border-border/60">
         <div className="bg-linear-to-br from-accent to-accent rounded-lg p-4 border border-border/30">
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-lg bg-linear-to-br from-primary to-primary/80 flex items-center justify-center shrink-0">
-              <Sparkles className="w-5 h-5 text-primary-foreground" />
+            <div className="w-10 h-10 rounded-lg bg-linear-to-br from-primary to-variable-purple flex items-center justify-center shrink-0">
+              <Terminal className="w-5 h-5 text-primary-foreground" />
             </div>
             <div>
               <h3 className="font-semibold text-sm text-foreground mb-1">
