@@ -22,13 +22,12 @@ export const routes = {
     },
     projects: {
       list: () => "/p",
-      detail: (slug: string) => `/p/${slug}`, // Changed to slug
-      features: (projectSlug: string) => `/p/${projectSlug}/f`, // New
+      detail: (slug: string) => `/p/${slug}`,
     },
     features: {
+      list: (projectSlug: string) => `/p/${projectSlug}/f`,
       detail: (projectSlug: string, featureSlug: string) =>
         `/p/${projectSlug}/f/${featureSlug}`,
-      create: (projectSlug: string) => `/p/${projectSlug}/f`,
     },
     tasks: {
       list: (projectSlug: string, featureSlug: string) =>

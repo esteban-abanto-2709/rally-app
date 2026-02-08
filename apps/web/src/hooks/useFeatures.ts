@@ -27,7 +27,7 @@ export function useFeatures(options: UseFeaturesOptions = {}) {
     try {
       setIsLoading(true);
       setError(null);
-      const endpoint = routes.api.projects.features(projectSlug);
+      const endpoint = routes.api.features.list(projectSlug);
       const data = await api.get<Feature[]>(endpoint, token);
       setFeatures(data);
     } catch (err) {
@@ -48,7 +48,7 @@ export function useFeatures(options: UseFeaturesOptions = {}) {
     if (!token || !projectSlug) throw new Error("Missing params");
 
     const newFeature = await api.post<Feature>(
-      routes.api.projects.features(projectSlug),
+      routes.api.features.list(projectSlug),
       data,
       token,
     );
