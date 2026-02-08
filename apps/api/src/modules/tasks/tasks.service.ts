@@ -12,32 +12,48 @@ import { generateSlug } from '@/utils/slug.util';
 export class TasksService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createTaskDto: CreateTaskDto, userId: string) {
-    // 1. Validate Project Ownership
-    const project = await this.prisma.project.findUnique({
-      where: { id: createTaskDto.projectId },
+  async create(
+    createTaskDto: CreateTaskDto,
+    projectSlug: string,
+    featureSlug: string,
+    userId: string,
+  ) {
+    // 1. Validate Feature Existence & Ownership via Hierarchy
+    const feature = await this.prisma.feature.findFirst({
+      where: {
+        slug: featureSlug,
+        project: {
+          slug: projectSlug,
+        },
+      },
+      include: {
+        project: true,
+      },
     });
 
-    if (!project) {
-      throw new ResourceNotFoundException('Project', createTaskDto.projectId);
+    if (!feature) {
+      throw new ResourceNotFoundException(
+        'Feature',
+        `${projectSlug}/${featureSlug}`,
+      );
     }
 
-    if (project.userId !== userId) {
-      throw new UnauthorizedResourceException('project');
+    if (feature.project.userId !== userId) {
+      throw new UnauthorizedResourceException('feature');
     }
 
     // Generate Slug
     let slug = generateSlug(createTaskDto.title);
-    // Check if slug exists for this project
+    // Check if slug exists for this feature
     let slugExists = await this.prisma.task.findFirst({
-      where: { projectId: createTaskDto.projectId, slug },
+      where: { featureId: feature.id, slug },
     });
     let counter = 1;
 
     while (slugExists) {
       slug = generateSlug(createTaskDto.title) + `-${counter}`;
       slugExists = await this.prisma.task.findFirst({
-        where: { projectId: createTaskDto.projectId, slug },
+        where: { featureId: feature.id, slug },
       });
       counter++;
     }
@@ -47,31 +63,46 @@ export class TasksService {
       data: {
         ...createTaskDto,
         slug,
+        feature: {
+          connect: {
+            id: feature.id,
+          },
+        },
       },
       include: {
-        project: true,
+        feature: {
+          include: {
+            project: true,
+          },
+        },
       },
     });
   }
 
-  async findAll(userId: string, projectId?: string) {
+  async findAll(projectSlug: string, featureSlug: string, userId: string) {
+    // Validate hierarchy first (optional but good for error messages) or just filter
     const whereCondition: any = {
-      project: {
-        userId: userId,
+      feature: {
+        slug: featureSlug,
+        project: {
+          slug: projectSlug,
+          userId: userId,
+        },
       },
     };
-
-    if (projectId) {
-      whereCondition.projectId = projectId;
-    }
 
     return this.prisma.task.findMany({
       where: whereCondition,
       include: {
-        project: {
-          select: {
-            id: true,
-            name: true,
+        feature: {
+          include: {
+            project: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+              },
+            },
           },
         },
       },
@@ -81,60 +112,72 @@ export class TasksService {
     });
   }
 
-  async findOne(id: string, userId: string) {
-    const task = await this.prisma.task.findUnique({
-      where: { id },
-      include: {
-        project: true,
-      },
-    });
-
-    if (!task) {
-      throw new ResourceNotFoundException('Task', id);
-    }
-
-    if (task.project.userId !== userId) {
-      throw new UnauthorizedResourceException('task');
-    }
-
-    return task;
-  }
-
-  async findBySlug(slug: string, userId: string, projectId: string) {
+  async findOne(
+    projectSlug: string,
+    featureSlug: string,
+    taskSlug: string,
+    userId: string,
+  ) {
     const task = await this.prisma.task.findFirst({
-      where: { slug, projectId },
+      where: {
+        slug: taskSlug,
+        feature: {
+          slug: featureSlug,
+          project: {
+            slug: projectSlug,
+          },
+        },
+      },
       include: {
-        project: true,
+        feature: {
+          include: {
+            project: true,
+          },
+        },
       },
     });
 
     if (!task) {
-      throw new ResourceNotFoundException('Task', slug);
+      throw new ResourceNotFoundException(
+        'Task',
+        `${projectSlug}/${featureSlug}/${taskSlug}`,
+      );
     }
 
-    if (task.project.userId !== userId) {
+    if (task.feature.project.userId !== userId) {
       throw new UnauthorizedResourceException('task');
     }
 
     return task;
   }
 
-  async update(id: string, updateTaskDto: UpdateTaskDto, userId: string) {
+  async update(
+    projectSlug: string,
+    featureSlug: string,
+    taskSlug: string,
+    updateTaskDto: UpdateTaskDto,
+    userId: string,
+  ) {
     // Ensure task exists and belongs to user
-    await this.findOne(id, userId);
+    const task = await this.findOne(projectSlug, featureSlug, taskSlug, userId);
 
     return this.prisma.task.update({
-      where: { id },
+      where: { id: task.id },
       data: updateTaskDto,
     });
   }
 
-  async remove(id: string, userId: string) {
+  async remove(
+    projectSlug: string,
+    featureSlug: string,
+    taskSlug: string,
+    userId: string,
+  ) {
     // Ensure task exists and belongs to user
-    await this.findOne(id, userId);
+    const task = await this.findOne(projectSlug, featureSlug, taskSlug, userId);
 
     return this.prisma.task.delete({
-      where: { id },
+      where: { id: task.id },
     });
   }
 }

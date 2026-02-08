@@ -1,11 +1,5 @@
 import { TaskStatus, Priority } from '@prisma/client';
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsUUID,
-} from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateTaskDto {
   @IsString()
@@ -15,10 +9,6 @@ export class CreateTaskDto {
   @IsString()
   @IsOptional()
   description?: string;
-
-  @IsUUID()
-  @IsNotEmpty()
-  projectId: string;
 
   @IsEnum(TaskStatus)
   @IsOptional()
